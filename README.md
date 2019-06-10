@@ -17,7 +17,7 @@ Now that you have it so that everything is working properly, you can use a cronj
 
 ## Thanks
 
-Big thanks to [christronyxyocum](https://github.com/christronyxyocum) for creating the Powershell version of the script for Windows users.
+Big thanks to [HalianElf](https://github.com/HalianElf) for creating the Powershell version of the script for Windows users.
 
 ## Questions
 
