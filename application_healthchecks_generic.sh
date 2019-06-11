@@ -298,6 +298,19 @@ check_tautulli() {
   fi
 }
 
+# Function to check Transmission
+check_transmission() {
+  appPort='9091'
+  subDir='/transmission/web/index.html'
+  hcUUID=''
+  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  fi
+}
 
 # Main function to run all other functions
 main() {
@@ -321,6 +334,7 @@ main() {
   check_rutorrent
   check_sonarr
   check_tautulli
+  check_transmission
 }
 
 main
