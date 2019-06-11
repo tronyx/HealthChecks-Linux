@@ -22,8 +22,8 @@ hcPingDomain='https://hc-ping.com/'
 check_organizr() {
   appPort='8889'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -36,8 +36,8 @@ check_bitwarden() {
   subDomain='bitwarden'
   appPort='8484'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
-  intResponse=$(curl -k -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
+  intResponse=$(curl -k -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -51,8 +51,8 @@ check_gitlab() {
   appPort='444'
   subDir='/users/sign_in'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -k -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -k -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -65,8 +65,8 @@ check_grafana() {
   subDomain='grafana'
   appPort='3000'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -79,8 +79,8 @@ check_guacamole() {
   appPort='8080'
   subDir='/guac/'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -93,7 +93,7 @@ check_jackett() {
   appPort='9117'
   subDir='/jackett/UI/Dashboard'
   hcUUID=''
-  extResponse=$(curl -IL -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
+  extResponse=$(curl -IL -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(wget -q -S -O - http://"${primaryServerAddress}":"${appPort}""${subDir}" 2>&1 1>/dev/null | awk '/^  HTTP/{print $2}' | tail -1)
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
@@ -107,8 +107,8 @@ check_library() {
   subDomain='library'
   appPort='8383'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -121,8 +121,8 @@ check_lidarr() {
   appPort='8686'
   subDir='/lidarr/'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -135,8 +135,8 @@ check_logarr() {
   appPort='8000'
   subDir='/logarr/'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -149,8 +149,8 @@ check_monitorr() {
   appPort='8001'
   subDir='/monitorr/'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -163,8 +163,8 @@ check_nzbget() {
   appPort='6789'
   subDir='/nzbget/'
   hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -177,8 +177,8 @@ check_nzbhydra2() {
   appPort='5076'
   subDir='/nzbhydra2/'
   hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -191,8 +191,8 @@ check_ombi() {
   appPort='3579'
   subDir='/ombi/'
   hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -205,8 +205,8 @@ check_pihole() {
   subDomain='pihole'
   subDir='/admin/'
   hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}")
+  extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -219,8 +219,8 @@ check_plex() {
   subDir='/plex/'
   appPort='32400'
   hcUUID=''
-  plexExtResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${domain}""${subDir}")
-  plexIntResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}"/web/index.html)
+  plexExtResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${domain}""${subDir}")
+  plexIntResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}"/web/index.html)
   if [[ "${plexExtResponse}" = '200' ]] && [[ "${plexIntResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${plexExtResponse}" != '200' ]] || [[ "${plexIntResponse}" != '200' ]]; then
@@ -233,8 +233,8 @@ check_portainer() {
   appPort='9000'
   subDir='/portainer/'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -247,8 +247,8 @@ check_radarr() {
   appPort='7878'
   subDir='/radarr/'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -261,8 +261,8 @@ check_rutorrent() {
   subDomain='rutorrent'
   appPort='9080'
   hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
   if [[ "${extResponse}" = '401' ]] && [[ "${intResponse}" = '401' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '401' ]]; then
@@ -275,8 +275,8 @@ check_sonarr() {
   appPort='9898'
   subDir='/sonarr/'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
@@ -289,8 +289,8 @@ check_tautulli() {
   appPort='8181'
   subDir='/tautulli/auth/login'
   hcUUID=''
-  extResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -I -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
     curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
   elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
