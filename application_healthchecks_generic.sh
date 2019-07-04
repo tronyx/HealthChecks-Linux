@@ -312,6 +312,20 @@ check_transmission() {
   fi
 }
 
+# Function to check Deluge
+check_deluge() {
+  appPort='8112'
+  subDir='/deluge/'
+  hcUUID=''
+  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}")
+  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  fi
+}
+
 # Main function to run all other functions
 main() {
   check_organizr
@@ -335,6 +349,7 @@ main() {
   check_sonarr
   check_tautulli
   check_transmission
+  check_deluge
 }
 
 main
