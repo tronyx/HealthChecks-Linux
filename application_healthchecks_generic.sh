@@ -38,7 +38,7 @@ check_organizr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -58,7 +58,7 @@ check_bitwarden() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
   intResponse=$(curl -k -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -79,7 +79,7 @@ check_gitlab() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -k -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -99,7 +99,7 @@ check_grafana() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -119,7 +119,7 @@ check_guacamole() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -139,7 +139,7 @@ check_jackett() {
   hcUUID=''
   extResponse=$(curl -IL -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(wget -q -S -O - http://"${primaryServerAddress}":"${appPort}""${subDir}" 2>&1 1>/dev/null | awk '/^  HTTP/{print $2}' | tail -1)
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -159,7 +159,7 @@ check_library() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -179,7 +179,7 @@ check_lidarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -199,7 +199,7 @@ check_logarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -219,7 +219,7 @@ check_monitorr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -239,7 +239,7 @@ check_nzbget() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -259,7 +259,7 @@ check_nzbhydra2() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -279,7 +279,7 @@ check_ombi() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -299,7 +299,7 @@ check_pihole() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -319,7 +319,7 @@ check_plex() {
   hcUUID=''
   plexExtResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${domain}""${subDir}")
   plexIntResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}"/web/index.html)
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -339,7 +339,7 @@ check_portainer() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -359,7 +359,7 @@ check_radarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -379,7 +379,7 @@ check_rutorrent() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -399,7 +399,7 @@ check_sonarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -419,7 +419,7 @@ check_tautulli() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -439,7 +439,7 @@ check_transmission() {
   hcUUID=''
   extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
@@ -459,7 +459,7 @@ check_deluge() {
   hcUUID=''
   extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
     :
