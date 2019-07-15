@@ -15,8 +15,22 @@ orgAPIKey=''
 primaryServerAddress='192.168.1.103'
 hcPingDomain='https://hc-ping.com/'
 
+# Location of the lock file that you can utilize to keep tests paused.
+tempDir='/tmp/'
+healthchecksLockFile="${tempDir}healthchecks.lock"
+
 # You will need to adjust the subDomain, appPort, subDir, and hcUUID variables for each application's function according to your setup
 # I've left in some examples to show the expected format.
+
+# Function to check for healthchecks lock file
+check_lock_file() {
+  if [ -e "${healthchecksLockFile}" ]; then
+    echo "Skipping checks due to lock file being present."
+    exit 0
+  else
+    main
+  fi
+}
 
 # Function to check Organizr public Domain
 check_organizr() {
@@ -328,6 +342,7 @@ check_deluge() {
 
 # Main function to run all other functions
 main() {
+  check_lock_file
   check_organizr
   check_bitwarden
   check_gitlab
