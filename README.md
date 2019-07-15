@@ -15,6 +15,10 @@ Once you have all of the checks configured as you need, you can run the script w
 
 Now that you have it so that everything is working properly, you can use a cronjob to schedule the script to run and perform the checks.
 
+## Tronitor
+
+This script partners up with my [Tronitor](https://github.com/christronyxyocum/tronitor) script that allows you to pause and unpause your monitors manually or via a cronjob for scheduled maintenance, etc. If you wish to use this script with Tronitor you will need to uncomment the Tronitor temp directory line and then comment out or remove the original one.
+
 ## Thanks
 
 Big thanks to [HalianElf](https://github.com/HalianElf) for creating the Powershell version of the script for Windows users.

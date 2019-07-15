@@ -17,6 +17,9 @@ hcPingDomain='https://hc-ping.com/'
 
 # Location of the lock file that you can utilize to keep tests paused.
 tempDir='/tmp/'
+# The below temp dir is for use with the Tronitor script
+# https://github.com/christronyxyocum/tronitor
+#tempDir='/tmp/tronitor/'
 healthchecksLockFile="${tempDir}healthchecks.lock"
 
 # You will need to adjust the subDomain, appPort, subDir, and hcUUID variables for each application's function according to your setup
