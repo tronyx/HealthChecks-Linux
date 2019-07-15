@@ -38,10 +38,16 @@ check_organizr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -52,10 +58,16 @@ check_bitwarden() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
   intResponse=$(curl -k -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -67,10 +79,16 @@ check_gitlab() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -k -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -81,10 +99,16 @@ check_grafana() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -95,10 +119,16 @@ check_guacamole() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -109,10 +139,16 @@ check_jackett() {
   hcUUID=''
   extResponse=$(curl -IL -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(wget -q -S -O - http://"${primaryServerAddress}":"${appPort}""${subDir}" 2>&1 1>/dev/null | awk '/^  HTTP/{print $2}' | tail -1)
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -123,10 +159,16 @@ check_library() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -137,10 +179,16 @@ check_lidarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -151,10 +199,16 @@ check_logarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -165,10 +219,16 @@ check_monitorr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -179,10 +239,16 @@ check_nzbget() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -193,10 +259,16 @@ check_nzbhydra2() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -207,10 +279,16 @@ check_ombi() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -221,10 +299,16 @@ check_pihole() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -235,10 +319,16 @@ check_plex() {
   hcUUID=''
   plexExtResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${domain}""${subDir}")
   plexIntResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}"/web/index.html)
-  if [[ "${plexExtResponse}" = '200' ]] && [[ "${plexIntResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${plexExtResponse}" != '200' ]] || [[ "${plexIntResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${plexExtResponse}" = '200' ]] && [[ "${plexIntResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${plexExtResponse}" != '200' ]] || [[ "${plexIntResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -249,10 +339,16 @@ check_portainer() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -263,10 +359,16 @@ check_radarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -277,10 +379,16 @@ check_rutorrent() {
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '401' ]] && [[ "${intResponse}" = '401' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '401' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '401' ]] && [[ "${intResponse}" = '401' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '401' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -291,10 +399,16 @@ check_sonarr() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -305,10 +419,16 @@ check_tautulli() {
   hcUUID=''
   extResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -I -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -319,10 +439,16 @@ check_transmission() {
   hcUUID=''
   extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
@@ -333,10 +459,16 @@ check_deluge() {
   hcUUID=''
   extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}")
-  if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-  elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-    curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+  appName=$(echo ${FUNCNAME[0]} |cut -c6-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
   fi
 }
 
