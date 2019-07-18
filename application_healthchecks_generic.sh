@@ -477,7 +477,6 @@ check_deluge() {
 
 # Main function to run all other functions
 main() {
-  check_lock_file
   check_organizr
   check_bitwarden
   check_gitlab
@@ -502,4 +501,4 @@ main() {
   check_deluge
 }
 
-main
+check_lock_file
