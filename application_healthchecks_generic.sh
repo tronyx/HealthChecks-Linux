@@ -140,8 +140,8 @@ check_jackett() {
   appPort='9117'
   subDir='/jackett/UI/Dashboard'
   hcUUID=''
-  extResponse=$(curl -IL -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(wget -q -S -O - http://"${primaryServerAddress}":"${appPort}""${subDir}" 2>&1 1>/dev/null | awk '/^  HTTP/{print $2}' | tail -1)
+  extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
   appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
   if [ -e "${appLockFile}" ]; then
