@@ -475,6 +475,24 @@ check_deluge() {
   fi
 }
 
+# Function to check SABnzbd
+check_sabnzbd() {
+  appPort='8580'
+  subDir='/sabnzbd/'
+  hcUUID=''
+  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Main function to run all other functions
 main() {
   check_organizr
@@ -499,6 +517,7 @@ main() {
   check_tautulli
   check_transmission
   check_deluge
+  check_sabnzbd
 }
 
 check_lock_file
