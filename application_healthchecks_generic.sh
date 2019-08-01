@@ -506,7 +506,7 @@ main() {
   check_logarr
   check_monitorr
   check_nzbget
-  check_nzbhydra2
+  check_nzbhydra
   check_ombi
   check_pihole
   check_plex
