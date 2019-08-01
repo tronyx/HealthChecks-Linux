@@ -255,10 +255,10 @@ check_nzbget() {
   fi
 }
 
-# Function to check NZBHydra2
-check_nzbhydra2() {
+# Function to check NZBHydra/NZBHydra2
+check_nzbhydra() {
   appPort='5076'
-  subDir='/nzbhydra2/'
+  subDir='/nzbhydra/'
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
