@@ -440,7 +440,7 @@ check_transmission() {
   appPort='9091'
   subDir='/transmission/web/index.html'
   hcUUID=''
-  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
+  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" https://"${domain}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}")
   appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
@@ -460,7 +460,7 @@ check_deluge() {
   appPort='8112'
   subDir='/deluge/'
   hcUUID=''
-  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
+  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" https://"${domain}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}")
   appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
