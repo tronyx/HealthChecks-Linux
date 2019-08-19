@@ -15,6 +15,15 @@ Once you have all of the checks configured as you need, you can run the script w
 
 Now that you have it so that everything is working properly, you can use a cronjob to schedule the script to run and perform the checks.
 
+I have mine scheduled to run every two minutes:
+
+```
+## Run application healthchecks script for Healthchecks.io
+*/2 * * * * /home/tronyx/scripts/application_healthchecks.sh
+```
+
+My checks are setup with a two minute period and a three minute grace. You can adjust all of that according to your needs.
+
 ## Tronitor
 
 This script partners up with my [Tronitor](https://github.com/christronyxyocum/tronitor) script that allows you to pause and unpause your monitors manually or via a cronjob for scheduled maintenance, etc. If you wish to use this script with Tronitor you will need to uncomment the Tronitor temp directory line and then comment out or remove the original one.
