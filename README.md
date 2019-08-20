@@ -17,7 +17,7 @@ Now that you have it so that everything is working properly, you can use a cronj
 
 I have mine scheduled to run every two minutes:
 
-```
+```bash
 ## Run application healthchecks script for Healthchecks.io
 */2 * * * * /home/tronyx/scripts/application_healthchecks.sh
 ```
