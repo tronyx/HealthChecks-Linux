@@ -138,7 +138,7 @@ check_guacamole() {
 # Function to check Jackett
 check_jackett() {
   appPort='9117'
-  subDir='/jackett/UI/Dashboard'
+  subDir='/jackett/UI/Login'
   hcUUID=''
   extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
   intResponse=$(curl -w "%{http_code}" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
