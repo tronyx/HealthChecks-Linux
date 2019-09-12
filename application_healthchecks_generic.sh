@@ -493,6 +493,29 @@ check_sabnzbd() {
   fi
 }
 
+# Function to check Nagios
+check_nagios() {
+  subDomain='nagios'
+  appPort='8787'
+  subDir=''
+  nagUser=''
+  nagPass=''
+  hcUUID=''
+  extResponse=$(curl -u "${nagUser}:${nagPass}" -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -u "${nagUser}:${nagPass}" -k -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Main function to run all other functions
 main() {
   check_organizr
@@ -518,6 +541,7 @@ main() {
   check_transmission
   check_deluge
   check_sabnzbd
+  check_nagios
 }
 
 check_lock_file
