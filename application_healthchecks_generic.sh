@@ -554,7 +554,7 @@ check_nextcloud() {
         curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
       fi
     fi
-  }
+}
 
 
 # Main function to run all other functions
