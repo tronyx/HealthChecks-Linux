@@ -536,6 +536,27 @@ check_thelounge() {
   fi
 }
 
+# Function to check Nextcloud
+check_nextcloud() {
+    subDomain='nextcloud'
+    appPort='9393'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -k -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+    appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+      :
+    else
+      if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+        curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+      elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+        curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+      fi
+    fi
+  }
+
+
 # Main function to run all other functions
 main() {
   check_organizr
@@ -563,6 +584,7 @@ main() {
   check_sabnzbd
   check_nagios
   check_thelounge
+  check_nextcloud
 }
 
 check_lock_file
