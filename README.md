@@ -1,7 +1,6 @@
 # HealthChecks Linux
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/959bfd5ae28547b1985f7a2e6dbb7e83)](https://www.codacy.com/app/christronyxyocum/HealthChecks-Linux?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=christronyxyocum/HealthChecks-Linux&amp;utm_campaign=Badge_Grade)
+[![CodeFactor](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux/badge)](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux)
 [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
-[![Beerpay](https://beerpay.io/christronyxyocum/HealthChecks-Linux/badge.svg)](https://beerpay.io/christronyxyocum/HealthChecks-Linux)
 
 Script to test various application reverse proxies, as well as their internal pages, and report to their respective [Healthchecks.io](https://healthchecks.io) checks. This is meant to work with [Organizr](https://github.com/causefx/Organizr) Auth, leveraging the API key to check the reverse proxies.
 
