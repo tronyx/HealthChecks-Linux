@@ -17,7 +17,7 @@ hcPingDomain='https://hc-ping.com/'
 
 # Location of the lock file that you can utilize to keep tests paused.
 tempDir='/tmp/'
-# The below temp dir is for use with the Tronitor script
+# The below temp dir is for use with the Tronitor script, uncomment the line if you wish to use it
 # https://github.com/christronyxyocum/tronitor
 #tempDir='/tmp/tronitor/'
 healthchecksLockFile="${tempDir}healthchecks.lock"
@@ -558,33 +558,34 @@ check_nextcloud() {
 
 
 # Main function to run all other functions
+# Uncomment (remove the # at the beginning of the line) to enable the checks you want
 main() {
-  check_organizr
-  check_bitwarden
-  check_gitlab
-  check_grafana
-  check_guacamole
-  check_jackett
-  check_library
-  check_lidarr
-  check_logarr
-  check_monitorr
-  check_nzbget
-  check_nzbhydra
-  check_ombi
-  check_pihole
-  check_plex
-  check_portainer
-  check_radarr
-  check_rutorrent
-  check_sonarr
-  check_tautulli
-  check_transmission
-  check_deluge
-  check_sabnzbd
-  check_nagios
-  check_thelounge
-  check_nextcloud
+    check_organizr
+    #check_bitwarden
+    #check_gitlab
+    #check_grafana
+    #check_guacamole
+    #check_jackett
+    #check_library
+    #check_lidarr
+    #check_logarr
+    #check_monitorr
+    #check_nzbget
+    #check_nzbhydra
+    #check_ombi
+    #check_pihole
+    #check_plex
+    #check_portainer
+    #check_radarr
+    #check_rutorrent
+    #check_sonarr
+    #check_tautulli
+    #check_transmission
+    #check_deluge
+    #check_sabnzbd
+    #check_nagios
+    #check_thelounge
+    #check_nextcloud
 }
 
 check_lock_file
