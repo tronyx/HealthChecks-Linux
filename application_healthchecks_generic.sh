@@ -74,6 +74,26 @@ check_bitwarden() {
   fi
 }
 
+# Function to check Deluge
+check_deluge() {
+  appPort='8112'
+  subDir='/deluge/'
+  hcUUID=''
+  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" https://"${domain}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}")
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Function to check GitLab
 check_gitlab() {
   subDomain='gitlab'
@@ -215,6 +235,26 @@ check_logarr() {
   fi
 }
 
+# Function to check TheLounge
+check_thelounge() {
+  appPort='9090'
+  subDir='/thelounge/'
+  hcUUID=''
+  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Function to check Monitorr
 check_monitorr() {
   appPort='8001'
@@ -233,6 +273,49 @@ check_monitorr() {
       curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
     fi
   fi
+}
+
+# Function to check Nagios
+check_nagios() {
+  subDomain='nagios'
+  appPort='8787'
+  subDir=''
+  nagUser=''
+  nagPass=''
+  hcUUID=''
+  extResponse=$(curl -u "${nagUser}:${nagPass}" -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -u "${nagUser}:${nagPass}" -k -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
+# Function to check Nextcloud
+check_nextcloud() {
+    subDomain='nextcloud'
+    appPort='9393'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -k -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+    appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+      :
+    else
+      if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+        curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+      elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+        curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+      fi
+    fi
 }
 
 # Function to check NZBGet
@@ -395,6 +478,24 @@ check_rutorrent() {
   fi
 }
 
+# Function to check SABnzbd
+check_sabnzbd() {
+  appPort='8580'
+  subDir='/sabnzbd/'
+  hcUUID=''
+  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+  intResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Function to check Sonarr
 check_sonarr() {
   appPort='9898'
@@ -455,113 +556,12 @@ check_transmission() {
   fi
 }
 
-# Function to check Deluge
-check_deluge() {
-  appPort='8112'
-  subDir='/deluge/'
-  hcUUID=''
-  extResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" https://"${domain}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -o /dev/null --connect-timeout 10 -s -w "%{http_code}\n" http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
-  appLockFile="${tempDir}${appName}".lock
-  if [ -e "${appLockFile}" ]; then
-    :
-  else
-    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
-    fi
-  fi
-}
-
-# Function to check SABnzbd
-check_sabnzbd() {
-  appPort='8580'
-  subDir='/sabnzbd/'
-  hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  if [ -e "${appLockFile}" ]; then
-    :
-  else
-    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
-    fi
-  fi
-}
-
-# Function to check Nagios
-check_nagios() {
-  subDomain='nagios'
-  appPort='8787'
-  subDir=''
-  nagUser=''
-  nagPass=''
-  hcUUID=''
-  extResponse=$(curl -u "${nagUser}:${nagPass}" -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -u "${nagUser}:${nagPass}" -k -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
-  appLockFile="${tempDir}${appName}".lock
-  if [ -e "${appLockFile}" ]; then
-    :
-  else
-    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
-    fi
-  fi
-}
-
-# Function to check TheLounge
-check_thelounge() {
-  appPort='9090'
-  subDir='/thelounge/'
-  hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
-  intResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
-  appLockFile="${tempDir}${appName}".lock
-  if [ -e "${appLockFile}" ]; then
-    :
-  else
-    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
-    fi
-  fi
-}
-
-# Function to check Nextcloud
-check_nextcloud() {
-    subDomain='nextcloud'
-    appPort='9393'
-    hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
-    intResponse=$(curl -k -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
-    appName=$(echo ${FUNCNAME[0]} |cut -c7-)
-    appLockFile="${tempDir}${appName}".lock
-    if [ -e "${appLockFile}" ]; then
-      :
-    else
-      if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-        curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
-      elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-        curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
-      fi
-    fi
-}
-
-
 # Main function to run all other functions
 # Uncomment (remove the # at the beginning of the line) to enable the checks you want
 main() {
     check_organizr
     #check_bitwarden
+    #check_deluge
     #check_gitlab
     #check_grafana
     #check_guacamole
@@ -569,7 +569,10 @@ main() {
     #check_library
     #check_lidarr
     #check_logarr
+    #check_thelounge
     #check_monitorr
+    #check_nagios
+    #check_nextcloud
     #check_nzbget
     #check_nzbhydra
     #check_ombi
@@ -578,14 +581,10 @@ main() {
     #check_portainer
     #check_radarr
     #check_rutorrent
+    #check_sabnzbd
     #check_sonarr
     #check_tautulli
-    #check_transmission
-    #check_deluge
-    #check_sabnzbd
-    #check_nagios
-    #check_thelounge
-    #check_nextcloud
+    #check_transmission    
 }
 
 check_lock_file
