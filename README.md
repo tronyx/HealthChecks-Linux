@@ -6,9 +6,11 @@ Script to test various application reverse proxies, as well as their internal pa
 
 ## Setting it up
 
-There are variables at the top that are used throughout the script to do the tests. You'll want to fill in your domain, Organizr API key, and server IP(s). If you are self-hosting Healthchecks, you can change the `hcPingDomain` variable. You'll also need to go to each of the `check_application` functions and edit the UUID for the Healthcheck and the ports and/or subdomains on those. Lastly, comment out any of the checks you don't need in the main function.
+There are variables at the top that are used throughout the script to do the tests. You'll want to fill in your domain, Organizr API key, and server IP(s). If you are self-hosting Healthchecks, you can change the `hcPingDomain` variable. You'll also need to go to each of the `check_application` functions and edit the UUID for the Healthcheck and the ports and/or subdomains on those. Lastly, uncomment the checks you want to run in the main function at the bottom of the script.
 
 Once you have all of the checks configured as you need, you can run the script with `bash -x application_healthchecks_generic.sh` to make sure that all the responses are returning what's expected.
+
+*NOTE:* You may need to tweak some of the URLs that are being used to check the applications depending on your setup.
 
 ## Scheduling
 
