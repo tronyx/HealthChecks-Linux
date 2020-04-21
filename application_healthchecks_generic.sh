@@ -74,6 +74,26 @@ check_bitwarden() {
   fi
 }
 
+# Function to check Chevereto
+check_chevereto() {
+  subDomain='gallery'
+  appPort='9292'
+  hcUUID=''
+  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
+  intResponse=$(curl -k -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Function to check Deluge
 check_deluge() {
   appPort='8112'
@@ -556,11 +576,33 @@ check_transmission() {
   fi
 }
 
+# Function to check vCenter
+# No external check because you should not reverse proxy your vCenter
+# Update VCENTER-HOSTNAME accordingly
+check_vcenter() {
+  subDir=''
+  hcUUID=''
+  extResponse='200'
+  intResponse=$(curl -w "%{http_code}" -sIk -o /dev/null --connect-timeout 10 https://VCENTER-HOSTNAME)
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Main function to run all other functions
 # Uncomment (remove the # at the beginning of the line) to enable the checks you want
 main() {
     check_organizr
     #check_bitwarden
+    #check_chevereto
     #check_deluge
     #check_gitlab
     #check_grafana
@@ -584,7 +626,8 @@ main() {
     #check_sabnzbd
     #check_sonarr
     #check_tautulli
-    #check_transmission    
+    #check_transmission
+    #check_vcenter
 }
 
 check_lock_file
