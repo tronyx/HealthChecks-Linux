@@ -603,7 +603,7 @@ check_vcenter() {
 check_xbackbone() {
   subDomain='sharex'
   hcUUID=''
-  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
+  extResponse=$(curl -w "%{http_code}" -sIL -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
   intResponse='200'
   appName=$(echo ${FUNCNAME[0]} |cut -c7-)
   appLockFile="${tempDir}${appName}".lock
