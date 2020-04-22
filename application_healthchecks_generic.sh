@@ -597,6 +597,27 @@ check_vcenter() {
   fi
 }
 
+# Function to check XBackBone
+# Internal check response set to 200 since XBackBone redirects you to the
+# domain you have associated with it if you try to browse to it locally
+check_xbackbone() {
+  subDomain='sharex'
+  hcUUID=''
+  extResponse=$(curl -w "%{http_code}" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
+  intResponse='200'
+  appName=$(echo ${FUNCNAME[0]} |cut -c7-)
+  appLockFile="${tempDir}${appName}".lock
+  if [ -e "${appLockFile}" ]; then
+    :
+  else
+    if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" > /dev/null
+    elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+      curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail > /dev/null
+    fi
+  fi
+}
+
 # Main function to run all other functions
 # Uncomment (remove the # at the beginning of the line) to enable the checks you want
 main() {
@@ -628,6 +649,7 @@ main() {
     #check_tautulli
     #check_transmission
     #check_vcenter
+    #check_xbackbone
 }
 
 check_lock_file
