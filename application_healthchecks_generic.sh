@@ -99,6 +99,26 @@ check_chevereto() {
     fi
 }
 
+# Function to check Filebrowser
+check_filebrowser() {
+    subDomain='files'
+    appPort='8585'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}" -sL -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}")
+    intResponse=$(curl -w "%{http_code}" -sL -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+    appName=$(echo ${FUNCNAME[0]} | cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check Deluge
 check_deluge() {
     appPort='8112'
