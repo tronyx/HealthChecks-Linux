@@ -19,6 +19,7 @@ hcPingDomain='https://hc-ping.com/'
 unraidServerAddress=''
 unifiControllerAddress=''
 vCenterServerAddress=''
+rNasServerAddress=''
 
 # Location of the lock file that you can utilize to keep tests paused.
 tempDir='/tmp/'
@@ -545,6 +546,28 @@ check_radarr() {
     fi
 }
 
+# Function to check ReadyNAS
+# No external check because you should not reverse proxy your ReadyNAS panel
+check_readynas() {
+    subDir='/admin/'
+    rNasUser=''
+    rNasPass=''
+    hcUUID=''
+    extResponse='200'
+    intResponse=$(curl -u "${rNasUser}:${rNasPass}" -w "%{http_code}\n" -sILk -o /dev/null --connect-timeout 10 https://"${rNasServerAddress}""${subDir}")
+    appName=$(echo ${FUNCNAME[0]} | cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check ruTorrent
 check_rutorrent() {
     subDomain='rutorrent'
@@ -769,6 +792,7 @@ main() {
     #check_plex
     #check_portainer
     #check_radarr
+    #check_readynas
     #check_rutorrent
     #check_sabnzbd
     #check_sonarr
