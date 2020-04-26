@@ -1,9 +1,5 @@
 # HealthChecks Linux
-[![CodeFactor](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux/badge)](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux)
-[![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
-[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/christronyxyocum/healthchecks-linux/blob/develop/LICENSE.md)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/christronyxyocum/healthchecks-linux.svg)](http://isitmaintained.com/project/christronyxyocum/healthchecks-linux "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/christronyxyocum/healthchecks-linux.svg)](http://isitmaintained.com/project/christronyxyocum/healthchecks-linux "Percentage of issues still open")
+[![CodeFactor](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux/badge)](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux) [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/christronyxyocum/healthchecks-linux/blob/develop/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/christronyxyocum/healthchecks-linux.svg)](http://isitmaintained.com/project/christronyxyocum/healthchecks-linux "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/christronyxyocum/healthchecks-linux.svg)](http://isitmaintained.com/project/christronyxyocum/healthchecks-linux "Percentage of issues still open")
 
 Script to test various application reverse proxies, as well as their internal pages, and report to their respective [Healthchecks.io](https://healthchecks.io) checks. This is meant to work with [Organizr](https://github.com/causefx/Organizr) Authentication, leveraging the Organizr API key to check the reverse proxies.
 
