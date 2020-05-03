@@ -649,7 +649,7 @@ check_sonarr() {
 # Function to check Tautulli
 check_tautulli() {
     appPort='8181'
-    subDir='/tautulli/auth/login'
+    subDir='/tautulli/status'
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
