@@ -65,7 +65,7 @@ check_bazarr() {
     appPort='6767'
     subDir='/bazarr/'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+    extResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
     appName=$(echo ${FUNCNAME[0]} | cut -c7-)
     appLockFile="${tempDir}${appName}".lock
