@@ -728,7 +728,7 @@ check_unifi_protect() {
 }
 
 # Function to check Unraid
-# No external check because you should not reverse proxy your vCenter
+# No external check because you should not reverse proxy your Unraid
 check_unraid() {
     appPort='80'
     hcUUID=''
