@@ -546,6 +546,26 @@ check_portainer() {
     fi
 }
 
+# Function to check qBittorrent
+check_qbittorrent() {
+    appPort='8080'
+    subDir='/qbit/'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+    appName=$(echo ${FUNCNAME[0]} | cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check Radarr
 check_radarr() {
     appPort='7878'
@@ -671,7 +691,7 @@ check_transmission() {
     appPort='9091'
     subDir='/transmission/web/index.html'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
     appName=$(echo ${FUNCNAME[0]} | cut -c7-)
     appLockFile="${tempDir}${appName}".lock
@@ -812,6 +832,7 @@ main() {
     #check_pihole
     #check_plex
     #check_portainer
+    #check_qbittorrent
     #check_radarr
     #check_readynas
     #check_rutorrent
