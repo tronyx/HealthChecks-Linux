@@ -686,6 +686,26 @@ check_tautulli() {
     fi
 }
 
+# Function to check Tdarr
+check_tdarr() {
+    appPort='8265'
+    subDomain='tdarr'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}.${domain}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}")
+    appName=$(echo ${FUNCNAME[0]} | cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check Transmission
 check_transmission() {
     appPort='9091'
@@ -839,6 +859,7 @@ main() {
     #check_sabnzbd
     #check_sonarr
     #check_tautulli
+    #check_tdarr
     #check_transmission
     #check_unifi_controller
     #check_unifi_protect
