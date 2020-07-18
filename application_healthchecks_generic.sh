@@ -586,6 +586,26 @@ check_radarr() {
     fi
 }
 
+# Function to check Radarr4k
+check_radarr4k() {
+    appPort='7879'
+    subDir='/radarr4k/'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    appName=$(echo ${FUNCNAME[0]} | cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check ReadyNAS
 # No external check because you should not reverse proxy your ReadyNAS panel
 check_readynas() {
@@ -650,6 +670,26 @@ check_sabnzbd() {
 check_sonarr() {
     appPort='9898'
     subDir='/sonarr/'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    appName=$(echo ${FUNCNAME[0]} | cut -c7-)
+    appLockFile="${tempDir}${appName}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
+# Function to check Sonarr4k
+check_sonarr4k() {
+    appPort='9899'
+    subDir='/sonarr4k/'
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
@@ -854,10 +894,12 @@ main() {
     #check_portainer
     #check_qbittorrent
     #check_radarr
+    #check_radarr4k
     #check_readynas
     #check_rutorrent
     #check_sabnzbd
     #check_sonarr
+    #check_sonarr4k
     #check_tautulli
     #check_tdarr
     #check_transmission
