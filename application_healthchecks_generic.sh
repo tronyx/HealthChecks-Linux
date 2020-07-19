@@ -815,7 +815,7 @@ check_unraid() {
     appPort='80'
     hcUUID=''
     extResponse='200'
-    intResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 http://"${unraidServerAddress}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 http://"${unraidServerAddress}"/login)
     #appName=$(echo ${FUNCNAME[0]} | cut -c7-)
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
@@ -854,7 +854,7 @@ check_vcenter() {
 check_xbackbone() {
     subDomain='sharex'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 https://"${subDomain}"."${domain}"/login -H "token: ${orgAPIKey}")
     intResponse='200'
     #appName=$(echo ${FUNCNAME[0]} | cut -c7-)
     appLockFile="${tempDir}${hcUUID}".lock
