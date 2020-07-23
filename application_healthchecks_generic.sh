@@ -125,7 +125,7 @@ check_deluge() {
     appPort='8112'
     subDir='/deluge/'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${domain}":"${appPort}""${subDir}" -H "token: ${orgAPIKey}")
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
     #appName=$(echo ${FUNCNAME[0]} | cut -c7-)
     appLockFile="${tempDir}${hcUUID}".lock
