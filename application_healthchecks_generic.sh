@@ -63,7 +63,7 @@ check_organizr() {
 # Function to check Bazarr
 check_bazarr() {
     appPort='6767'
-    subDir='/bazarr/series'
+    subDir='/bazarr/series/'
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
