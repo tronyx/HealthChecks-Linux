@@ -3,6 +3,13 @@
 
 Script to test various application reverse proxies, as well as their internal pages, and report to their respective [Healthchecks.io](https://healthchecks.io) checks. This is meant to work with [Organizr](https://github.com/causefx/Organizr) Authentication, leveraging the Organizr API key to check the reverse proxies.
 
+If you are not using Organizr, which you totally should be if you're not, you can remove the following from the external URL for any checks you want to use:
+
+```bash
+ -H "token: ${orgAPIKey}"
+```
+Mind the space that is at the beginning of the line too. 
+
 ## Setting it up
 
 There are variables at the top that are used throughout the script to do the tests. You'll want to fill in your domain, Organizr API key, and server IP(s). If you are self-hosting Healthchecks, you can change the `hcPingDomain` variable. You'll also need to go to each of the `check_application` functions and edit the UUID for the Healthcheck and the ports and/or subdomains or subdirectories on those. Lastly, uncomment (remove the `#` from the beginning of the line) the checks that you wish to run in the main function at the bottom of the script.
