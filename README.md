@@ -16,6 +16,12 @@ There are variables at the top that are used throughout the script to do the tes
 
 Once you have all of the checks configured as you need, you can run the script with `bash -x application_healthchecks_generic.sh` to make sure that all the responses are returning what's expected, an HTTP response code of `200`.
 
+If you do not have reverse proxies (external access) setup for your applications, you can simply set the external response variable to `200` so that will always pass:
+
+```bash
+extResponse='200'
+```
+
 :warning: **NOTE:** You may need to tweak some of the URLs that are being used to check the applications depending on your setup and you might be using a subfolder configuration where I'm using a subdomain or vice versa. Point is, this won't work 100% for everyone, so you might need to do some trial and error to get everything working.
 
 ## Scheduling
