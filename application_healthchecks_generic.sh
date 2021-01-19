@@ -486,6 +486,27 @@ check_ombi() {
     fi
 }
 
+# Function to check Overseerr
+check_overseerr() {
+    appPort='5055'
+    subDomain='overseerr'
+    subDir='/login'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}.${domain}${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    #appName=$(echo ${FUNCNAME[0]} | cut -c7-)
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check PiHole
 check_pihole() {
     subDomain='pihole'
@@ -891,6 +912,7 @@ main() {
     #check_nzbget
     #check_nzbhydra
     #check_ombi
+    #check_overseerr
     #check_pihole
     #check_plex
     #check_portainer
