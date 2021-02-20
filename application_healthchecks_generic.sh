@@ -541,6 +541,25 @@ check_portainer() {
     fi
 }
 
+# Function to check Prowlarr
+check_prowlarr() {
+    appPort='9696'
+    subDir='/prowlarr/'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check qBittorrent
 check_qbittorrent() {
     appPort='8080'
@@ -874,6 +893,7 @@ main() {
     #check_pihole
     #check_plex
     #check_portainer
+    #check_prowlarr
     #check_qbittorrent
     #check_radarr
     #check_radarr4k
