@@ -484,6 +484,30 @@ check_overseerr() {
     fi
 }
 
+# Function to check Petio
+# Comment out whichever one you do not use.
+check_petio() {
+    subDomain='petio'
+    #subDir='/petio/'
+    appPort='7777'
+    hcUUID=''
+    # Subdomain
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
+    # Subdirectory
+    #extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check PiHole
 check_pihole() {
     subDomain='pihole'
@@ -890,6 +914,7 @@ main() {
     #check_nzbhydra
     #check_ombi
     #check_overseerr
+    #check_petio
     #check_pihole
     #check_plex
     #check_portainer
