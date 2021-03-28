@@ -909,6 +909,7 @@ main() {
     #check_thelounge
     #check_monitorr
     #check_nagios
+    #check_netdata
     #check_nextcloud
     #check_nzbget
     #check_nzbhydra
