@@ -899,6 +899,7 @@ main() {
     #check_bitwarden
     #check_chevereto
     #check_deluge
+    #check_filebrowser
     #check_gitlab
     #check_grafana
     #check_guacamole
