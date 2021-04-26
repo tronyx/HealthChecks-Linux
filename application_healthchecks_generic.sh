@@ -59,6 +59,25 @@ check_organizr() {
     fi
 }
 
+# Function to check AdGuard
+check_adguard() {
+    subDomain='adguard'
+    appPort='80'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}"/login.html)
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}"/login.html)
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check Bazarr
 check_bazarr() {
     appPort='6767'
@@ -895,6 +914,7 @@ check_xbackbone() {
 # Uncomment (remove the # at the beginning of the line) to enable the checks you want
 main() {
     check_organizr
+    #check_adguard
     #check_bazarr
     #check_bitwarden
     #check_chevereto
