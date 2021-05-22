@@ -15,7 +15,7 @@ orgAPIKey=''
 primaryServerAddress='192.168.1.103'
 hcPingDomain='https://hc-ping.com/'
 
-# Additional hostnam evariables for other checks like Unraid, vCenter, Unifi Controler, Unifi Protect, etc.
+# Additional hostname variables for other checks like Unraid, vCenter, Unifi Controler, Unifi Protect, etc.
 unraidServerAddress=''
 unifiControllerAddress=''
 vCenterServerAddress=''
