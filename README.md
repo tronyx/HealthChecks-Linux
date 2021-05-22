@@ -1,13 +1,26 @@
 # HealthChecks Linux
-[![CodeFactor](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux/badge)](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux) [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/christronyxyocum/healthchecks-linux/blob/develop/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/christronyxyocum/healthchecks-linux.svg)](http://isitmaintained.com/project/christronyxyocum/healthchecks-linux "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/christronyxyocum/healthchecks-linux.svg)](http://isitmaintained.com/project/christronyxyocum/healthchecks-linux "Percentage of issues still open")
+[![CodeFactor](https://www.codefactor.io/repository/github/tronyx/healthchecks-linux/badge)](https://www.codefactor.io/repository/github/christronyxyocum/healthchecks-linux) [![made-with-bash](https://img.shields.io/badge/Made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/tronyx/healthchecks-linux/blob/develop/LICENSE.md) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/healthchecks-linux.svg)](http://isitmaintained.com/project/tronyx/healthchecks-linux "Average time to resolve an issue") [![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/healthchecks-linux.svg)](http://isitmaintained.com/project/tronyx/healthchecks-linux "Percentage of issues still open")
 
 Script to test various application reverse proxies, as well as their internal pages, and report to their respective [Healthchecks.io](https://healthchecks.io) checks. This is meant to work with [Organizr](https://github.com/causefx/Organizr) Authentication, leveraging the Organizr API key to check the reverse proxies.
+
+If you are not using Organizr, which you totally should be if you're not, you can remove the following from the external URL for any checks you want to use:
+
+```bash
+ -H "token: ${orgAPIKey}"
+```
+Mind the space that is at the beginning of the line too. 
 
 ## Setting it up
 
 There are variables at the top that are used throughout the script to do the tests. You'll want to fill in your domain, Organizr API key, and server IP(s). If you are self-hosting Healthchecks, you can change the `hcPingDomain` variable. You'll also need to go to each of the `check_application` functions and edit the UUID for the Healthcheck and the ports and/or subdomains or subdirectories on those. Lastly, uncomment (remove the `#` from the beginning of the line) the checks that you wish to run in the main function at the bottom of the script.
 
 Once you have all of the checks configured as you need, you can run the script with `bash -x application_healthchecks_generic.sh` to make sure that all the responses are returning what's expected, an HTTP response code of `200`.
+
+If you do not have reverse proxies (external access) setup for your applications, you can simply set the external response variable to `200` so that will always pass:
+
+```bash
+extResponse='200'
+```
 
 :warning: **NOTE:** You may need to tweak some of the URLs that are being used to check the applications depending on your setup and you might be using a subfolder configuration where I'm using a subdomain or vice versa. Point is, this won't work 100% for everyone, so you might need to do some trial and error to get everything working.
 
