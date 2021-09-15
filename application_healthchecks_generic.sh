@@ -15,7 +15,7 @@ orgAPIKey=''
 primaryServerAddress='192.168.1.103'
 hcPingDomain='https://hc-ping.com/'
 
-# Additional hostnam evariables for other checks like Unraid, vCenter, Unifi Controler, Unifi Protect, etc.
+# Additional hostname variables for other checks like Unraid, vCenter, Unifi Controler, Unifi Protect, etc.
 unraidServerAddress=''
 unifiControllerAddress=''
 vCenterServerAddress=''
@@ -47,6 +47,25 @@ check_organizr() {
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${domain}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
+# Function to check AdGuard
+check_adguard() {
+    subDomain='adguard'
+    appPort='80'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}"/login.html -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}"/login.html)
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
         :
@@ -911,6 +930,7 @@ check_xbackbone() {
 # Uncomment (remove the # at the beginning of the line) to enable the checks you want
 main() {
     check_organizr
+    #check_adguard
     #check_bazarr
     #check_bitwarden
     #check_chevereto
