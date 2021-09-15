@@ -546,6 +546,22 @@ check_plex() {
     fi
 }
 
+# Function to check status of Plex Auth Service
+check_plex_auth() {
+    hcUUID=''
+    plexAuthStatus=$(curl -s https://status.plex.tv/ | grep -B4 'Authentication and API server' | grep status | awk -F= '{print $2}' | tr -d '"')
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${plexAuthStatus}" = 'operational' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${plexAuthStatus}" != 'operational' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check Portainer
 check_portainer() {
     appPort='9000'
@@ -919,6 +935,7 @@ main() {
     #check_petio
     #check_pihole
     #check_plex
+    #check_plex_auth
     #check_portainer
     #check_prowlarr
     #check_qbittorrent
