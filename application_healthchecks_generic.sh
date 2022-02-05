@@ -869,6 +869,8 @@ check_unifi_protect() {
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -sIL -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sILk -o /dev/null --connect-timeout 10 -m 10 https://"${unifiControllerAddress}":"${appPort}")
+    # With the 1.21.0 update it seems you have to drop the -I option with curl
+    #intResponse=$(curl -w "%{http_code}\n" -sLk -o /dev/null --connect-timeout 10 -m 10 https://"${unifiControllerAddress}":"${appPort}")
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
         :
