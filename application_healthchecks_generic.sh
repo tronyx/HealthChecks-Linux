@@ -274,8 +274,13 @@ check_lidarr() {
     appPort='8686'
     subDir='/lidarr/'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
-    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    # For newer versions you need to drop the I from the curl command
+    # Older
+    #extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+    #intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    # Newer
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${domain}${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
         :
