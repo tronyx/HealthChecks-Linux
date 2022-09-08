@@ -431,6 +431,25 @@ check_nextcloud() {
     fi
 }
 
+# Function to check Notifiarr
+check_notifiarr() {
+    appPort='5454'
+    subDir='/notifiarr/'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${domain}""${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check NZBGet
 check_nzbget() {
     appPort='6789'
