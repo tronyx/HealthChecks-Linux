@@ -573,7 +573,7 @@ check_petio() {
 # Function to check PiHole
 check_pihole() {
     subDomain='pihole'
-    subDir='/admin/'
+    subDir='/admin/login.php'
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}")
