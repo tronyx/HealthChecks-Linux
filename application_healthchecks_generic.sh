@@ -192,6 +192,25 @@ check_filebrowser() {
     fi
 }
 
+# Function to check Gitea
+check_gitea() {
+    subDomain='gitea'
+    appPort='1234'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${primaryServerAddress}":"${appPort}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check GitLab
 check_gitlab() {
     subDomain='gitlab'
@@ -199,7 +218,7 @@ check_gitlab() {
     subDir='/users/sign_in'
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
-    intResponse=$(curl -w "%{http_code}\n" -sIk -o /dev/null --connect-timeout 10 -m 10 https://"${primaryServerAddress}":"${appPort}""${subDir}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${primaryServerAddress}":"${appPort}""${subDir}")
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
         :
@@ -701,7 +720,7 @@ check_radarr() {
 }
 
 # Function to check Radarr v4
-check_radarr() {
+check_radarr_v4() {
     appPort='7878'
     subDir='/radarr/'
     hcUUID=''
@@ -982,7 +1001,9 @@ main() {
     #check_bitwarden
     #check_chevereto
     #check_deluge
+    #check_dozzle
     #check_filebrowser
+    #check_gitea
     #check_gitlab
     #check_grafana
     #check_guacamole
@@ -991,10 +1012,12 @@ main() {
     #check_lidarr
     #check_logarr
     #check_thelounge
+    #check_mediabutler
     #check_monitorr
     #check_nagios
     #check_netdata
     #check_nextcloud
+    #check_notifiarr
     #check_nzbget
     #check_nzbhydra
     #check_ombi
@@ -1007,12 +1030,12 @@ main() {
     #check_prowlarr
     #check_qbittorrent
     #check_radarr
-    #check_radarr4k
+    #check_radarr_v4
     #check_readynas
     #check_rutorrent
     #check_sabnzbd
     #check_sonarr
-    #check_sonarr4k
+    #check_sonarr_v4
     #check_tautulli
     #check_tdarr
     #check_transmission
