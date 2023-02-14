@@ -430,6 +430,25 @@ check_nagios() {
     fi
 }
 
+# Function to check Navidrome
+check_navidrome() {
+    appPort='4533'
+    subDir='/navidrome'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${domain}""${subDir}"/app -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}""${subDir}"/app)
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Function to check Netdata
 check_netdata() {
     appPort='9999'
@@ -1015,6 +1034,7 @@ main() {
     #check_mediabutler
     #check_monitorr
     #check_nagios
+    #check_navidrome
     #check_netdata
     #check_nextcloud
     #check_notifiarr
