@@ -1049,6 +1049,25 @@ check_xbackbone() {
     fi
 }
 
+# Function to check Zipline
+check_zipline() {
+    subDomain='zipline'
+    subDir='/auth/login'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+    intResponse='200'
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+        fi
+    fi
+}
+
 # Main function to run all other functions
 # Uncomment (remove the # at the beginning of the line) to enable the checks you want
 main() {
@@ -1104,6 +1123,7 @@ main() {
     #check_unraid
     #check_vcenter
     #check_xbackbone
+    #check_zipline
 }
 
 check_lock_file
