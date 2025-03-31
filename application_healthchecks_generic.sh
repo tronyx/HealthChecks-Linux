@@ -52,9 +52,9 @@ check_organizr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -71,9 +71,9 @@ check_adguard() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -90,9 +90,9 @@ check_bazarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -109,9 +109,9 @@ check_bitwarden() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -128,9 +128,9 @@ check_chevereto() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -147,9 +147,9 @@ check_deluge() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -166,9 +166,9 @@ check_dozzle() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -185,9 +185,9 @@ check_filebrowser() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -204,9 +204,9 @@ check_forgejo() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -223,9 +223,9 @@ check_gitea() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -243,9 +243,9 @@ check_gitlab() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -262,9 +262,9 @@ check_grafana() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -281,9 +281,9 @@ check_guacamole() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -300,9 +300,9 @@ check_immich() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -319,9 +319,9 @@ check_jackett() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -338,9 +338,9 @@ check_library() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -362,9 +362,9 @@ check_lidarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -381,9 +381,9 @@ check_logarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -400,9 +400,9 @@ check_thelounge() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -420,9 +420,9 @@ check_mediabutler() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -439,9 +439,9 @@ check_monitorr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -461,9 +461,9 @@ check_nagios() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -480,9 +480,9 @@ check_navidrome() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -500,9 +500,9 @@ check_netdata() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -519,9 +519,9 @@ check_nextcloud() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -538,9 +538,9 @@ check_notifiarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -557,9 +557,9 @@ check_nzbget() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -576,9 +576,9 @@ check_nzbhydra() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -595,9 +595,9 @@ check_ombi() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -615,9 +615,9 @@ check_overseerr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -639,9 +639,9 @@ check_petio() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -658,9 +658,9 @@ check_pihole() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -677,9 +677,9 @@ check_plex() {
         :
     else
         if [[ "${plexExtResponse}" = '200' ]] && [[ "${plexIntResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${plexExtResponse}" != '200' ]] || [[ "${plexIntResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -693,9 +693,9 @@ check_plex_auth() {
         :
     else
         if [[ "${plexAuthStatus}" = 'operational' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${plexAuthStatus}" != 'operational' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -712,9 +712,9 @@ check_portainer() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -731,9 +731,9 @@ check_prowlarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -750,9 +750,9 @@ check_qbittorrent() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -769,9 +769,9 @@ check_radarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -788,9 +788,9 @@ check_radarr_v4() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -809,9 +809,9 @@ check_readynas() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -828,9 +828,9 @@ check_rutorrent() {
         :
     else
         if [[ "${extResponse}" = '401' ]] && [[ "${intResponse}" = '401' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '401' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -847,9 +847,9 @@ check_sabnzbd() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -866,9 +866,9 @@ check_sonarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -885,9 +885,9 @@ check_sonarr_v4() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -904,9 +904,9 @@ check_tautulli() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -923,9 +923,9 @@ check_tdarr() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -942,9 +942,9 @@ check_transmission() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -964,9 +964,9 @@ check_unifi_controller() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -985,9 +985,9 @@ check_unifi_protect() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -1004,9 +1004,9 @@ check_unraid() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -1022,9 +1022,9 @@ check_vcenter() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -1042,9 +1042,9 @@ check_xbackbone() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
@@ -1061,9 +1061,9 @@ check_zipline() {
         :
     else
         if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
         elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
-            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail >/dev/null
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
         fi
     fi
 }
