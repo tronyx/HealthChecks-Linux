@@ -22,7 +22,11 @@ If you do not have reverse proxies (external access) setup for your applications
 extResponse='200'
 ```
 
-:warning: **NOTE:** You may need to tweak some of the URLs that are being used to check the applications depending on your setup and you might be using a subfolder configuration where I'm using a subdomain or vice versa. Point is, this won't work 100% for everyone, so you might need to do some trial and error to get everything working.
+:warning: **NOTE:** You may need to tweak some of the URLs that are being used to check the applications depending on your setup and you might be using a subfolder configuration where I'm using a subdomain or vice versa. Point is, this won't work 100% for everyone, so you might need to do some trial and error to get everything working. If you run a `curl` command by hand and it comes back with a response of `302` that means there is a redirect and you will need to determine what the final URL is to check against. To help with this, you can run the following command (obviously updating the URL) to determine that final URL:
+
+`curl -Ls -o /dev/null -w %{url_effective} http://domain.com`
+
+:warning: **NOTE:** If you have the login page (authentication) enabled for any of the Arr applications, IE: Sonarr, Radarr, Prowlarr, you will most likely need to append the `/login` page to the URL that is being tested.
 
 ## Scheduling
 
