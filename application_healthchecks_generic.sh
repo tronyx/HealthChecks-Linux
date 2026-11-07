@@ -326,6 +326,25 @@ check_jackett() {
     fi
 }
 
+# Function to check Komodo
+check_komodo() {
+    appPort='9120'
+    subDomain='komodo'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
+        fi
+    fi
+}
+
 # Function to check PLPP
 check_library() {
     subDomain='library'
@@ -1086,6 +1105,7 @@ main() {
     #check_guacamole
     #check_immich
     #check_jackett
+    #check_komodo
     #check_library
     #check_lidarr
     #check_logarr
