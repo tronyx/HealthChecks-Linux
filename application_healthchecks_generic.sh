@@ -20,6 +20,7 @@ unraidServerAddress=''
 unifiControllerAddress=''
 vCenterServerAddress=''
 rNasServerAddress=''
+secondaryDomain=''
 
 # Location of the lock file that you can utilize to keep tests paused.
 tempDir='/tmp/'
@@ -873,6 +874,25 @@ check_sabnzbd() {
     fi
 }
 
+# Function to check Snipe-IT
+check_snipe-it() {
+    appPort='8005'
+    subDomain='snipe-it'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}.${domain}"/login -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}"/login)
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
+        fi
+    fi
+}
+
 # Function to check Sonarr
 check_sonarr() {
     appPort='9898'
@@ -934,6 +954,25 @@ check_tautulli() {
 check_tdarr() {
     appPort='8265'
     subDomain='tdarr'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}.${domain}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
+        fi
+    fi
+}
+
+# Function to check Tracearr
+check_tracearr() {
+    appPort='3000'
+    subDomain='tracearr'
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}.${domain}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
@@ -1133,10 +1172,12 @@ main() {
     #check_readynas
     #check_rutorrent
     #check_sabnzbd
+    #check_snipe-it
     #check_sonarr
     #check_sonarr_v4
     #check_tautulli
     #check_tdarr
+    #check_tracearr
     #check_transmission
     #check_unifi_controller
     #check_unifi_protect
