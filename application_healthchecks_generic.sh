@@ -815,6 +815,25 @@ check_qbittorrent() {
     fi
 }
 
+# Function to check qui
+check_qui() {
+    appPort='7475'
+    subDomain='qui'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}.${domain}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
+        fi
+    fi
+}
+
 # Function to check Radarr
 check_radarr() {
     appPort='7878'
@@ -1207,6 +1226,7 @@ main() {
     #check_portainer
     #check_prowlarr
     #check_qbittorrent
+    #check_qui
     #check_radarr
     #check_radarr_v4
     #check_readynas
