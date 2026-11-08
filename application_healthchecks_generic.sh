@@ -136,6 +136,25 @@ check_chevereto() {
     fi
 }
 
+# Function to check Dashbrr
+check_dashbrr() {
+    appPort='8383'
+    subDomain='dashbrr'
+    hcUUID=''
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}.${domain}" -H "token: ${orgAPIKey}")
+    intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
+    appLockFile="${tempDir}${hcUUID}".lock
+    if [ -e "${appLockFile}" ]; then
+        :
+    else
+        if [[ "${extResponse}" = '200' ]] && [[ "${intResponse}" = '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}" -H "token: ${orgAPIKey}" >/dev/null
+        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '200' ]]; then
+            curl -fsS --retry 3 "${hcPingDomain}${hcUUID}"/fail -H "token: ${orgAPIKey}" >/dev/null
+        fi
+    fi
+}
+
 # Function to check Deluge
 check_deluge() {
     appPort='8112'
@@ -1134,6 +1153,7 @@ main() {
     #check_bazarr
     #check_bitwarden
     #check_chevereto
+    #check_dashbrr
     #check_deluge
     #check_dozzle
     #check_filebrowser
