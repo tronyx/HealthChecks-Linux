@@ -817,7 +817,7 @@ check_qbittorrent() {
 
 # Function to check qui
 check_qui() {
-    appPort='7475'
+    appPort='7476'
     subDomain='qui'
     hcUUID=''
     extResponse=$(curl -w "%{http_code}\n" -s -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}.${domain}" -H "token: ${orgAPIKey}")
