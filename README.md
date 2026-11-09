@@ -2,7 +2,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/tronyx/healthchecks-linux/badge)](https://www.codefactor.io/repository/github/tronyx/healthchecks-linux)
 [![Made with Bash](https://img.shields.io/badge/made%20with-Bash-1f425f.svg)](https://www.gnu.org/software/bash/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/healthchecks-linux.svg)](http://isitmaintained.com/project/tronyx/healthchecks-linux "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/healthchecks-linux.svg)](http://isitmaintained.com/project/tronyx/healthchecks-linux "Percentage of issues still open")
 
@@ -202,4 +202,4 @@ If you have questions, you can find me on the [Organizr Discord](https://organiz
 
 ## 📄 License
 
-The license is MIT. See [LICENSE](LICENSE).
+The license is MIT. See [LICENSE.md](LICENSE.md).
