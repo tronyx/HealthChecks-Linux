@@ -39,7 +39,7 @@ You must have these tools on the host that runs the script:
 | --- | --- |
 | Bash | The script is a Bash script |
 | cURL | The script uses `curl` to test the applications and to send the pings |
-| cron | Optional. Runs the script on a schedule. See [Scheduling](#-scheduling) |
+| cron | Optional. Runs the script on a schedule. See [Scheduling](#%EF%B8%8F-scheduling) |
 
 You must also have a [Healthchecks.io](https://healthchecks.io) account, or a self-hosted Healthchecks server. Create one check for each application that you want to monitor.
 
@@ -66,7 +66,7 @@ You must also have a [Healthchecks.io](https://healthchecks.io) account, or a se
 
    Make sure that each `extResponse` and each `intResponse` is `200`.
 
-6. Run the script on a schedule. See [Scheduling](#-scheduling).
+6. Run the script on a schedule. See [Scheduling](#%EF%B8%8F-scheduling).
 
 ## ⚙️ Configuration
 
