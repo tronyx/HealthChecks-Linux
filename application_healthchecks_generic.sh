@@ -20,7 +20,7 @@ unraidServerAddress=''
 unifiControllerAddress=''
 vCenterServerAddress=''
 rNasServerAddress=''
-secondaryDomain=''
+#secondaryDomain=''
 
 # Location of the lock file that you can utilize to keep tests paused.
 tempDir='/tmp/'
