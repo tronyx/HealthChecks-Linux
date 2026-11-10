@@ -3,7 +3,8 @@
 
 Each check sends one or more GET requests, usually one through the reverse proxy and one straight to the
 application, and pings its Healthchecks check with success when every answer is as expected, or with fail
-otherwise. The checks and settings come from a TOML file; secrets come from environment variables.
+otherwise. The checks and settings come from a TOML file. Secrets come from the same file, which must then be
+readable only by its owner, or from environment variables, which win over the file.
 """
 
 import argparse
@@ -76,14 +77,14 @@ HOST_VALUE_RE = re.compile(r"[A-Za-z0-9.:\[\]-]+")
 PLACEHOLDER_RE = re.compile(r"\{([^{}]*)\}")
 
 TOP_KEYS = ("general", "hosts", "auth", "check")
-GENERAL_KEYS = ("ping_url", "lock_dir", "timeout", "workers", "send_details")
-AUTH_KEYS = ("user", "password_env")
+GENERAL_KEYS = ("ping_url", "lock_dir", "timeout", "workers", "send_details", "organizr_token")
+AUTH_KEYS = ("user", "password", "password_env")
 CHECK_KEYS = ("name", "uuid", "enabled", "kind", "probes", "url", "component")
 PROBE_KEYS = ("url", "expect", "follow_redirects", "verify_tls", "send_token", "auth")
 KINDS = ("http", "statuspage")
 
 
-"""Configuration: the TOML file, and the environment variables that hold the secrets."""
+"""Configuration: the TOML file, and the environment variables that can override its secrets."""
 
 
 class ConfigError(Exception):
@@ -92,10 +93,11 @@ class ConfigError(Exception):
 
 @dataclass(frozen=True)
 class AuthEntry:
-    """One [auth.<name>] table: a user name, and the environment variable that holds the password."""
+    """One [auth.<name>] table: a user name, a password, and an environment variable that overrides the password."""
 
     user: str
-    password_env: str
+    password_env: str = ""
+    password: str = field(default="", repr=False)
 
 
 @dataclass(frozen=True)
@@ -144,6 +146,7 @@ class Config:
     workers: int
     send_details: bool
     checks: tuple[Check, ...]
+    organizr_token: str = field(default="", repr=False)
 
 
 def _suggest(name: str, known: Sequence[str]) -> str:
@@ -248,6 +251,14 @@ def _hosts(raw: object) -> dict[str, str]:
     return hosts
 
 
+def _get_secret(table: Mapping[str, Any], key: str, where: str) -> str:
+    """Return the string at table[key] as written, or an empty string; the value never appears in an error."""
+    value = table.get(key, "")
+    if not isinstance(value, str):
+        raise ConfigError(f"{where}: {key} must be a string")
+    return value
+
+
 def _auths(raw: object) -> dict[str, AuthEntry]:
     """Return the [auth.<name>] tables."""
     table = _table(raw, "[auth]")
@@ -256,20 +267,36 @@ def _auths(raw: object) -> dict[str, AuthEntry]:
         where = f"[auth.{name}]"
         entry = _table(value, where)
         _known(entry, AUTH_KEYS, where)
-        auths[name] = AuthEntry(_get_str(entry, "user", where), _get_str(entry, "password_env", where))
-        if not auths[name].password_env:
-            raise ConfigError(f"{where}: password_env must name an environment variable")
+        auths[name] = AuthEntry(
+            user=_get_str(entry, "user", where),
+            password_env=_get_str(entry, "password_env", where, ""),
+            password=_get_secret(entry, "password", where),
+        )
     return auths
 
 
 def _credentials(name: str, entry: AuthEntry, env: Mapping[str, str], where: str) -> Credentials:
-    """Return the user name and password of [auth.<name>]; the password comes from the environment."""
+    """Return the user name and password of [auth.<name>]; the password_env variable, when set, wins."""
     if not entry.user:
         raise ConfigError(f"{where}: [auth.{name}] user is empty")
-    password = env.get(entry.password_env, "")
+    password = (env.get(entry.password_env, "") if entry.password_env else "") or entry.password
     if not password:
-        raise ConfigError(f"{where}: the environment variable {entry.password_env} is not set (see [auth.{name}])")
+        if entry.password_env:
+            raise ConfigError(
+                f"{where}: the environment variable {entry.password_env} is not set, and [auth.{name}] has no password"
+            )
+        raise ConfigError(f"{where}: [auth.{name}] needs a password, or password_env to name an environment variable")
     return Credentials(entry.user, password)
+
+
+def _check_private(path: Path) -> None:
+    """Raise ConfigError if users other than the owner can read or change path, which holds a secret."""
+    try:
+        mode = path.stat().st_mode
+    except OSError as exc:
+        raise ConfigError(f"cannot read the permissions of the file: {exc.strerror or exc}") from None
+    if mode & 0o077:
+        raise ConfigError(f"the file holds a secret, but other users can open it; make it private: chmod 600 {path}")
 
 
 def _expect(value: object, where: str) -> frozenset[int]:
@@ -378,8 +405,11 @@ def _build_config(path: Path, doc: Mapping[str, Any], env: Mapping[str, str]) ->
     general = _table(doc.get("general", {}), "[general]")
     _known(general, GENERAL_KEYS, "[general]")
     ping_url = _check_url(_get_str(general, "ping_url", "[general]", DEFAULT_PING_URL), "[general]", "ping_url")
+    file_token = _get_secret(general, "organizr_token", "[general]").strip()
     hosts = _hosts(doc.get("hosts", {}))
     auths = _auths(doc.get("auth", {}))
+    if file_token or any(entry.password for entry in auths.values()):
+        _check_private(path)
     checks_raw = doc.get("check", [])
     if not isinstance(checks_raw, list):
         raise ConfigError("check must be a list of tables; start each one with [[check]]")
@@ -402,11 +432,12 @@ def _build_config(path: Path, doc: Mapping[str, Any], env: Mapping[str, str]) ->
         workers=_get_int(general, "workers", "[general]", 8, 1, 64),
         send_details=_get_bool(general, "send_details", "[general]", True),
         checks=checks,
+        organizr_token=env.get(ENV_TOKEN, "").strip() or file_token,
     )
 
 
 def load_config(path: Path, env: Mapping[str, str]) -> Config:
-    """Read and validate the config file at path; the passwords come from env."""
+    """Read and validate the config file at path; the secrets in env win over the ones in the file."""
     try:
         doc = tomllib.loads(path.read_text(encoding="utf-8"))
     except (tomllib.TOMLDecodeError, OSError, UnicodeDecodeError) as exc:
@@ -783,7 +814,7 @@ def main(argv: Sequence[str] | None = None, env: Mapping[str, str] | None = None
         if run_lock is None:
             print("healthchecks-linux: the previous run is still going, so this run is skipped", file=sys.stderr)
             return EXIT_OK
-    token = env.get(ENV_TOKEN, "").strip()
+    token = config.organizr_token
     try:
         with ThreadPoolExecutor(max_workers=min(config.workers, len(checks))) as pool:
             results = list(pool.map(lambda check: run_check(check, config, token, not args.dry_run), checks))

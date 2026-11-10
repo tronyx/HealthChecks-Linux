@@ -70,10 +70,10 @@ You must also have a [Healthchecks.io](https://healthchecks.io) account, or a se
 
 4. For each application that you want to monitor, find its `[[check]]` table. Set `uuid` to the UUID of its Healthchecks.io check, and set `enabled = true`. If necessary, change the URLs of its probes.
 
-5. If you use Organizr, put your Organizr API key in the `HCL_ORGANIZR_TOKEN` environment variable:
+5. If you use Organizr, set `organizr_token` in the `[general]` table to your Organizr API key. Then make the file readable only by you. The script refuses to run if other users can read a file that holds a secret:
 
    ```bash
-   export HCL_ORGANIZR_TOKEN='your-organizr-api-key'
+   chmod 600 healthchecks.toml
    ```
 
 6. Test the checks. The `--dry-run` option shows the status code of each probe, and sends no pings:
@@ -110,6 +110,7 @@ The `[general]` table applies to all the checks. All of its settings are optiona
 | `timeout` | The number of seconds that a probe waits for each answer | `10` |
 | `workers` | The number of checks that run at the same time | `8` |
 | `send_details` | If `true`, each ping includes the URL and the result of each probe. If `false`, the pings are empty | `true` |
+| `organizr_token` | Your Organizr API key. See [Secrets](#-secrets) | Empty |
 
 ### The hosts table
 
@@ -163,28 +164,41 @@ The `plex_auth` check is different. Its `kind` is `"statuspage"`. It does not te
 
 ### 🔐 Secrets
 
-The configuration file does not hold secrets. The script reads them from environment variables:
+The script uses two types of secret:
 
-| Environment variable | What it holds |
-| --- | --- |
-| `HCL_ORGANIZR_TOKEN` | Your Organizr API key. The probes that have `send_token = true` send it |
-| The `password_env` of each `[auth.<name>]` table | The password for HTTP basic authentication, for example `HCL_NAGIOS_PASSWORD` |
+- Your Organizr API key, in `organizr_token` in the `[general]` table. The probes that have `send_token = true` send it.
+- The passwords for HTTP basic authentication. HTTP basic authentication sends a user name and a password with each request. Some applications, for example Nagios, use it.
 
-HTTP basic authentication sends a user name and a password with each request. Some applications, for example Nagios, use it. An `[auth.<name>]` table holds the user name and the name of the environment variable:
+An `[auth.<name>]` table holds a user name and a password:
 
 ```toml
 [auth.nagios]
 user = "nagiosadmin"
-password_env = "HCL_NAGIOS_PASSWORD"
+password = "your-nagios-password"
 ```
 
 A probe with `auth = "nagios"` then sends this user name and password.
+
+If `healthchecks.toml` holds a secret, make the file readable only by you:
+
+```bash
+chmod 600 healthchecks.toml
+```
+
+If other users can read or change a file that holds a secret, the script shows the `chmod` command and runs no checks.
+
+You can also keep the secrets out of the file, in environment variables. If an environment variable is set, the script uses it instead of the value in the file:
+
+| Environment variable | Replaces |
+| --- | --- |
+| `HCL_ORGANIZR_TOKEN` | `organizr_token` |
+| The variable that `password_env` names, for example `password_env = "HCL_NAGIOS_PASSWORD"` | `password` in the same `[auth.<name>]` table |
 
 The script sends the API key and the passwords only to the URL of the probe. It never sends them to Healthchecks.io. If a probe follows a redirect to a different host, the script does not send them to that host.
 
 ### 🔓 Without Organizr
 
-If you do not use Organizr, do not set `HCL_ORGANIZR_TOKEN`. Then the probes send no `token` header. You do not have to change `send_token`.
+If you do not use Organizr, leave `organizr_token` empty. Then the probes send no `token` header. You do not have to change `send_token`.
 
 ### 🚫 Without a reverse proxy
 
@@ -243,15 +257,16 @@ To add an application, copy a `[[check]]` table that is similar. Then change its
 
 ## ⏱️ Scheduling
 
-When all the checks pass, use cron to run the script automatically. This crontab entry runs the script every two minutes. The first line sets the environment variable for the script:
+When all the checks pass, use cron to run the script automatically. This crontab entry runs the script every two minutes:
 
 ```bash
-HCL_ORGANIZR_TOKEN=your-organizr-api-key
 ## Run application healthchecks script for Healthchecks.io
 */2 * * * * /usr/bin/python3 /home/tronyx/HealthChecks-Linux/healthchecks_linux.py
 ```
 
-The crontab of each user is private to that user and to root. Thus, other users cannot read the API key in it.
+The script reads the secrets from `healthchecks.toml`, so the crontab entry needs nothing else. Cron runs the job as the user that owns the crontab. That user must be able to read `healthchecks.toml`, so add the entry to the crontab of the user that owns the file. If you keep the secrets in environment variables instead, set them on lines above the entry, for example `HCL_ORGANIZR_TOKEN=your-organizr-api-key`.
+
+If a run is still busy when the next run starts, the next run stops. Thus, two runs never overlap.
 
 The script shows output only when an error occurs, and cron sends you an email for each output. Thus, you get an email only when a ping fails or the configuration has an error.
 
@@ -297,11 +312,12 @@ All users on the computer can write to `/tmp`. Thus, other users can create or d
 | --- | --- |
 | A probe returns `301` or `302` | The URL redirects to a different URL. Find the final URL with the command below, and use that URL in the probe. Or set `follow_redirects = true` |
 | An Arr application with a login page fails | If you turned on the login page (authentication) in Sonarr, Radarr, Prowlarr, or another Arr application, add `login` to the URLs, for example `https://{domain}/sonarr/login` |
-| An external probe fails, but the internal probe passes | Make sure that the subdomain or the subfolder in the probe agrees with your reverse proxy. If you use Organizr, make sure that `HCL_ORGANIZR_TOKEN` is correct and that the probe has `send_token = true` |
+| An external probe fails, but the internal probe passes | Make sure that the subdomain or the subfolder in the probe agrees with your reverse proxy. If you use Organizr, make sure that `organizr_token` is correct and that the probe has `send_token = true` |
 | A probe shows `error: timed out` or `Connection refused` | The script did not get an answer. Make sure that the address and the port are correct, and that the host that runs the script can connect to them |
 | A probe shows `CERTIFICATE_VERIFY_FAILED` | The HTTPS certificate is not valid, for example because it is self-signed. If the address is on your own network, set `verify_tls = false` on the probe |
 | The script shows `the previous run is still going, so this run is skipped` | A run takes longer than the time between two runs. Lower `timeout`, increase `workers`, or run the script less often |
 | The script shows `an enabled check needs a uuid` | Set the `uuid` of the check, or set `enabled = false` |
+| The script shows `the file holds a secret, but other users can open it` | Run the `chmod 600` command that the message shows, as the user that owns the file |
 
 This command shows the final URL after all the redirects. Replace `http://domain.com` with the URL of the application:
 
@@ -318,13 +334,15 @@ curl -Ls -o /dev/null -w %{url_effective} http://domain.com
 | `domain` | `domain` in `[hosts]` |
 | `primaryServerAddress` | `primary` in `[hosts]` |
 | `unraidServerAddress`, `unifiControllerAddress`, `vCenterServerAddress`, `rNasServerAddress` | `unraid`, `unifi`, `vcenter`, `readynas` in `[hosts]` |
-| `orgAPIKey` | The `HCL_ORGANIZR_TOKEN` environment variable |
+| `orgAPIKey` | `organizr_token` in `[general]` |
 | `hcPingDomain` | `ping_url` in `[general]` |
 | `tempDir` | `lock_dir` in `[general]`, without the `/` at the end |
 | `hcUUID` in `check_<application>` | `uuid` in the `[[check]]` table of the application |
 | An uncommented `check_<application>` line in `main` | `enabled = true` in the `[[check]]` table of the application |
-| `nagUser` and `nagPass` | `user` in `[auth.nagios]`, and the `HCL_NAGIOS_PASSWORD` environment variable |
-| `rNasUser` and `rNasPass` | `user` in `[auth.readynas]`, and the `HCL_READYNAS_PASSWORD` environment variable |
+| `nagUser` and `nagPass` | `user` and `password` in `[auth.nagios]` |
+| `rNasUser` and `rNasPass` | `user` and `password` in `[auth.readynas]` |
+
+After you copy the API key or a password into `healthchecks.toml`, run `chmod 600 healthchecks.toml`.
 
 The Python script also works differently in these ways:
 

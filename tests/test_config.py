@@ -81,6 +81,63 @@ def test_credentials_come_from_the_environment(tmp_path: Path) -> None:
     assert "hunter2" not in repr(credentials)
 
 
+NAS_AUTH = '[auth.nas]\nuser = "admin"\npassword = "from-file"\npassword_env = "NAS_PW"\n\n'
+NAS_CHECK = check(probes='{ url = "http://x.test/", auth = "nas" }')
+
+
+def _private(path: Path) -> Path:
+    path.chmod(0o600)
+    return path
+
+
+@pytest.mark.parametrize(("env", "password"), [({}, "from-file"), ({"NAS_PW": "from-env"}, "from-env")])
+def test_password_from_the_file_or_the_environment(tmp_path: Path, env: dict[str, str], password: str) -> None:
+    config = load_config(_private(_write(tmp_path, NAS_AUTH + NAS_CHECK)), env)
+    assert config.checks[0].probes[0].auth == Credentials("admin", password)
+
+
+def test_password_without_password_env(tmp_path: Path) -> None:
+    text = '[auth.nas]\nuser = "admin"\npassword = "pw"\n\n' + NAS_CHECK
+    assert load_config(_private(_write(tmp_path, text)), {}).checks[0].probes[0].auth == Credentials("admin", "pw")
+
+
+def test_auth_without_any_password(tmp_path: Path) -> None:
+    text = '[auth.nas]\nuser = "admin"\n\n' + NAS_CHECK
+    with pytest.raises(ConfigError, match=r"\[auth.nas\] needs a password, or password_env"):
+        load_config(_write(tmp_path, text), {})
+
+
+@pytest.mark.parametrize(("env", "token"), [({}, "file-token"), ({"HCL_ORGANIZR_TOKEN": " env-token "}, "env-token")])
+def test_organizr_token_from_the_file_or_the_environment(tmp_path: Path, env: dict[str, str], token: str) -> None:
+    path = _private(_write(tmp_path, '[general]\norganizr_token = "file-token"\n' + check()))
+    config = load_config(path, env)
+    assert config.organizr_token == token
+    assert token not in repr(config)
+
+
+def test_organizr_token_from_the_environment_only(tmp_path: Path) -> None:
+    assert load_config(_write(tmp_path, check()), {"HCL_ORGANIZR_TOKEN": "t"}).organizr_token == "t"
+
+
+@pytest.mark.parametrize(
+    "text", ['[general]\norganizr_token = "secret"\n' + check(), NAS_AUTH + NAS_CHECK], ids=["token", "password"]
+)
+@pytest.mark.parametrize("mode", [0o644, 0o640, 0o604, 0o620])
+def test_file_with_a_secret_must_be_private(tmp_path: Path, text: str, mode: int) -> None:
+    path = _write(tmp_path, text)
+    path.chmod(mode)
+    with pytest.raises(ConfigError) as error:
+        load_config(path, {})
+    assert f"other users can open it; make it private: chmod 600 {path}" in str(error.value)
+    assert 'secret"' not in str(error.value) and "from-file" not in str(error.value)
+
+
+def test_file_without_a_secret_can_be_shared(tmp_path: Path) -> None:
+    path = _write(tmp_path, '[general]\norganizr_token = ""\n[auth.nas]\nuser = "a"\npassword_env = "P"\n' + check())
+    path.chmod(0o644)
+    load_config(path, {})
+
+
 def test_statuspage_check(tmp_path: Path) -> None:
     text = (
         f'[[check]]\nname = "plex_auth"\nuuid = "{UUID_A}"\nkind = "statuspage"\n'
@@ -117,7 +174,8 @@ def test_disabled_check_needs_no_uuid_host_or_password(tmp_path: Path) -> None:
         ("[general]\nsend_details = 1\n", "send_details must be true or false"),
         ('[hosts]\nbad = "a/b"\n', "[hosts]: bad must be a host name or an IP address"),
         ('[hosts]\n1st = "a"\n', "'1st' must start with a letter"),
-        ('[auth.x]\nuser = "u"\n', "[auth.x]: password_env is required"),
+        ('[auth.x]\nuser = "u"\npassword = 1\n', "[auth.x]: password must be a string"),
+        ("[general]\norganizr_token = 1\n", "[general]: organizr_token must be a string"),
         ('[auth.x]\nuser = "u"\npassword_env = "P"\npass = "p"\n', "[auth.x]: unknown key 'pass'"),
         ('[[check]]\nuuid = "x"\n', "check #1: name is required"),
         ('[[check]]\nname = "a b"\n', "check #1: name must start with a letter or digit"),
@@ -222,7 +280,7 @@ def test_example_config_loads_with_every_check_enabled(tmp_path: Path) -> None:
     text = text.replace("enabled = false", "enabled = true").replace('user = ""', 'user = "admin"')
     text = re.sub(r'^(\w+) = ""$', r'\1 = "10.0.0.9"', text, flags=re.MULTILINE)
     env = {"HCL_NAGIOS_PASSWORD": "pw", "HCL_READYNAS_PASSWORD": "pw"}
-    config = load_config(_write(tmp_path, text), env)
+    config = load_config(_private(_write(tmp_path, text)), env)
     assert all(check.enabled for check in config.checks)
     for item in config.checks:
         for probe in item.probes:

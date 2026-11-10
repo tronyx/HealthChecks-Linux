@@ -5,11 +5,13 @@
 # want to run, set uuid to the UUID of its Healthchecks check, and set
 # enabled = true. Then test with:  python3 healthchecks_linux.py --dry-run
 #
-# Secrets are not kept in this file. Set them as environment variables:
-#   HCL_ORGANIZR_TOKEN  Your Organizr API key. Probes with send_token = true
-#                       send it in a "token" header. If you do not use
-#                       Organizr, leave it unset and nothing is sent.
-#   Each [auth.<name>] table names its own variable in password_env.
+# Secrets: this file can hold your Organizr API key and the passwords in the
+# [auth.<name>] tables. If it does, make it readable only by you, or the
+# script refuses to run:  chmod 600 healthchecks.toml
+# You can also keep the secrets out of the file, in environment variables.
+# An environment variable that is set wins over the file:
+#   HCL_ORGANIZR_TOKEN  for organizr_token
+#   password_env        names the variable for each [auth.<name>] password
 
 [general]
 # The ping URL of Healthchecks. If you host Healthchecks yourself, use yours.
@@ -23,6 +25,9 @@ workers = 8
 # Send the result of each request with the ping, so that it shows in the
 # check's log on Healthchecks and in its alerts.
 send_details = true
+# Your Organizr API key. Probes with send_token = true send it in a "token"
+# header. If you do not use Organizr, leave it empty and nothing is sent.
+organizr_token = ""
 
 # Each name here can be used as {name} in a URL. Add more if you need them,
 # for example a second server or a second domain.
@@ -34,12 +39,15 @@ unifi = ""
 vcenter = ""
 readynas = ""
 
+# HTTP basic auth for the probes that name these tables in auth.
 [auth.nagios]
 user = ""
+password = ""
 password_env = "HCL_NAGIOS_PASSWORD"
 
 [auth.readynas]
 user = ""
+password = ""
 password_env = "HCL_READYNAS_PASSWORD"
 
 # Each check has a name, the uuid of its Healthchecks check, and a list of
@@ -52,7 +60,7 @@ password_env = "HCL_READYNAS_PASSWORD"
 #   follow_redirects  Follow redirects. Default: false.
 #   verify_tls        Check the HTTPS certificate. Default: true. Set it to
 #                     false for a self-signed certificate on your network.
-#   send_token        Send HCL_ORGANIZR_TOKEN in a "token" header. Default:
+#   send_token        Send organizr_token in a "token" header. Default:
 #                     false. After a redirect, it is only sent to the same host.
 #   auth              The name of an [auth.<name>] table, for HTTP basic auth.
 #

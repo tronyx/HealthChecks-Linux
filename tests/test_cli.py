@@ -49,6 +49,26 @@ def test_token_goes_to_the_probe_but_not_to_healthchecks(write_config: WriteConf
     assert all("token" not in request.headers for request in server.requests if request.path.startswith("/ping/"))
 
 
+def test_token_from_a_private_config_file(write_config: WriteConfig, server: FakeServer) -> None:
+    script_answers(server)
+    path = two_checks(write_config, general='organizr_token = "file-secret"')
+    path.chmod(0o600)
+    assert main(["-c", str(path)], {}) == 0
+    assert server.requests_to("/ok")[0].headers["token"] == "file-secret"
+    assert all("token" not in request.headers for request in server.requests if request.path.startswith("/ping/"))
+
+
+def test_shared_config_file_with_a_token_is_refused(
+    write_config: WriteConfig, server: FakeServer, capsys: pytest.CaptureFixture[str]
+) -> None:
+    path = two_checks(write_config, general='organizr_token = "file-secret"')
+    path.chmod(0o644)
+    assert main(["-c", str(path)], {}) == 2
+    assert server.requests == []
+    err = capsys.readouterr().err
+    assert f"chmod 600 {path}" in err and "file-secret" not in err
+
+
 def test_verbose_shows_results(
     write_config: WriteConfig, server: FakeServer, capsys: pytest.CaptureFixture[str]
 ) -> None:
