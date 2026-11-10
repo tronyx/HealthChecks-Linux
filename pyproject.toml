@@ -1,0 +1,18 @@
+# Settings for the checks run on every push.
+# Only ruff, mypy and pytest read this file; it isn't needed to use the script.
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+
+[tool.ruff.lint]
+preview = true
+extend-select = ["E"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["healthchecks_linux.py"]
+strict = true
+
+[tool.coverage.run]
+source = ["healthchecks_linux"]
