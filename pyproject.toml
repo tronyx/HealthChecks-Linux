@@ -11,8 +11,12 @@ extend-select = ["E"]
 
 [tool.mypy]
 python_version = "3.10"
-files = ["healthchecks_linux.py"]
+files = ["healthchecks_linux.py", "tests"]
 strict = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "tests"]
 
 [tool.coverage.run]
 source = ["healthchecks_linux"]
