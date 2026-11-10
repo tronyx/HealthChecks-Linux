@@ -49,7 +49,9 @@ Found a security vulnerability? Please don't open an issue: see the [security po
 
    `ruff` is a linter and formatter, and `mypy` checks the type hints. Both are set up in `pyproject.toml`, and GitHub runs them on every push too, along with `shellcheck -S warning application_healthchecks_generic.sh` for the Bash script.
 
-5. Commit, push, and open a pull request against `develop`:
+5. Add a line under **Unreleased** in `CHANGELOG.md`, saying what changes for someone using the script.
+
+6. Commit, push, and open a pull request against `develop`:
 
    ```bash
    git add -A
@@ -82,3 +84,4 @@ Every application is a `[[check]]` table in `healthchecks.example.toml`. The scr
 - **Never show a secret.** The Organizr API key and the passwords must never appear in output, error messages, the ping body or a `repr()`, and must never be sent to Healthchecks or to another host after a redirect. Add a test when you touch that code.
 - **Add or update tests** for any change in behavior, against the fake server, so they run anywhere without an account. Tests of the config file go in `tests/test_config.py`, of the probes and pings in `tests/test_http.py`, of the command line in `tests/test_cli.py`, and of `--migrate` in `tests/test_migrate.py`.
 - **Update the README** if you add an option or a setting, or change what the script does.
+- **Add a line to the changelog** under **Unreleased** in `CHANGELOG.md`, saying what changes for someone using the script.

@@ -22,6 +22,8 @@ The external probes can send your [Organizr](https://github.com/causefx/Organizr
 > [!NOTE]
 > Each setup is different. You can use a subfolder where the example configuration uses a subdomain, or the opposite. Thus, you will probably need to change some URLs before all the checks pass. See [Troubleshooting](#-troubleshooting).
 
+The [changelog](CHANGELOG.md) lists every change by release.
+
 ## ✨ Features
 
 The script has these features:
