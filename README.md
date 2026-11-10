@@ -1,11 +1,9 @@
 # 🩺 HealthChecks Linux
 
-[![CodeFactor](https://www.codefactor.io/repository/github/tronyx/healthchecks-linux/badge)](https://www.codefactor.io/repository/github/tronyx/healthchecks-linux)
-[![Tests](https://github.com/tronyx/HealthChecks-Linux/actions/workflows/tests.yml/badge.svg)](https://github.com/tronyx/HealthChecks-Linux/actions/workflows/tests.yml)
-[![Made with Python](https://img.shields.io/badge/made%20with-Python-3776ab.svg)](https://www.python.org/)
+[![Tests](https://img.shields.io/github/actions/workflow/status/tronyx/HealthChecks-Linux/tests.yml?branch=master&label=tests)](https://github.com/tronyx/HealthChecks-Linux/actions/workflows/tests.yml?query=branch%3Amaster)
+[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Ftronyx%2FHealthChecks-Linux%2Fbadges%2Fcoverage-master.json&label=coverage)](https://github.com/tronyx/HealthChecks-Linux/actions/workflows/tests.yml?query=branch%3Amaster)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](#-requirements)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE.md)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/tronyx/healthchecks-linux.svg)](http://isitmaintained.com/project/tronyx/healthchecks-linux "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/tronyx/healthchecks-linux.svg)](http://isitmaintained.com/project/tronyx/healthchecks-linux "Percentage of issues still open")
 
 HealthChecks Linux tests your self-hosted applications and reports the result of each test to [Healthchecks.io](https://healthchecks.io).
 
