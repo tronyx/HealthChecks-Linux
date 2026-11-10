@@ -220,6 +220,8 @@ python3 healthchecks_linux.py [options]
 | `--only NAME[,NAME...]` | Run only these checks |
 | `-v`, `--verbose` | Show the result of each check |
 | `-V`, `--version` | Show the version |
+| `--migrate PATH` | Write `healthchecks.toml` from a configured copy of the Bash script, then stop. See [The Bash script](#-the-bash-script-deprecated) |
+| `--force` | Let `--migrate` replace a configuration file that exists |
 
 Without `--verbose` or `--dry-run`, the script shows output only for a problem, for example a ping that did not reach Healthchecks.io. The script stops with one of these exit codes:
 
@@ -327,7 +329,32 @@ curl -Ls -o /dev/null -w %{url_effective} http://domain.com
 
 ## 🐚 The Bash script (deprecated)
 
-`application_healthchecks_generic.sh` is the old Bash version. It still works, but a future release removes it. To move to the Python script, copy `healthchecks.example.toml` to `healthchecks.toml`, and move each setting:
+`application_healthchecks_generic.sh` is the old Bash version. It still works, but a future release removes it.
+
+### 🔄 Migrating your settings
+
+The `--migrate` option reads your configured copy of the Bash script and writes `healthchecks.toml` from it. It reads the script as text, and it does not run it:
+
+```bash
+python3 healthchecks_linux.py --migrate /path/to/application_healthchecks_generic.sh
+```
+
+The option writes `healthchecks.toml` in the folder of `healthchecks_linux.py`, or in the file that `--config` names. If the file exists, the option stops. Add `--force` to replace the file.
+
+The new file gets these settings from the Bash script:
+
+- Each variable at the top of the script, for example `primaryServerAddress`, becomes a name in `[hosts]`, for example `primary`. Variables that you added, for example `dockerServerAddress`, become names too, for example `docker`.
+- `orgAPIKey` becomes `organizr_token`. `hcPingDomain` becomes `ping_url`, and `tempDir` becomes `lock_dir`.
+- Each check that `main` runs becomes a `[[check]]` table. Each `curl` command in its function becomes a probe. The `-L`, `-k`, `-u`, and `token` header options become `follow_redirects`, `verify_tls`, `auth`, and `send_token`. The status code in its `if` line becomes `expect`.
+- A check that has no UUID, or a host with no value, gets `enabled = false`.
+
+The file can hold your API key and passwords, so the option makes the file readable only by you. The option then shows what it carried over, disabled, or skipped. It does not show the secrets. Run `--dry-run` next, and make sure that each check shows `PASS`.
+
+The checks that `main` does not run are not carried over. To add one, copy its `[[check]]` table from `healthchecks.example.toml`.
+
+### ✍️ Migrating by hand
+
+To move the settings yourself, copy `healthchecks.example.toml` to `healthchecks.toml`, and move each setting:
 
 | Bash script | `healthchecks.toml` |
 | --- | --- |
@@ -344,10 +371,12 @@ curl -Ls -o /dev/null -w %{url_effective} http://domain.com
 
 After you copy the API key or a password into `healthchecks.toml`, run `chmod 600 healthchecks.toml`.
 
-The Python script also works differently in these ways:
+### 🔀 Differences from the Bash script
+
+The Python script works differently from the Bash script in these ways:
 
 - Each probe sends a GET request. The Bash script sent a HEAD request for some applications. Thus, the `radarr_v4` and `sonarr_v4` checks are now the same as `radarr` and `sonarr`.
-- The external Plex probe uses `https`. The Bash script used `http`.
+- The external Plex probe in `healthchecks.example.toml` uses `https`. The Bash script used `http`.
 - The `plex_auth` check reads the JSON data of the Plex status page. The Bash script read its HTML page.
 
 ## 🪟 Windows

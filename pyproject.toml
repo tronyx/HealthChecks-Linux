@@ -9,6 +9,10 @@ line-length = 120
 preview = true
 extend-select = ["E"]
 
+[tool.ruff.lint.per-file-ignores]
+# Its sample Bash script copies the long curl lines of the real one.
+"tests/test_migrate.py" = ["E501"]
+
 [tool.mypy]
 python_version = "3.10"
 files = ["healthchecks_linux.py", "tests"]
