@@ -49,7 +49,7 @@ ping_healthchecks() {
     if [[ "${1:-}" = 'fail' ]]; then
         pingURL="${pingURL}/fail"
     fi
-    curl -fsS --retry 3 "${pingURL}" >/dev/null
+    curl -fsS --retry 3 --connect-timeout 10 -m 10 "${pingURL}" >/dev/null
 }
 
 # Function to check Organizr public Domain
