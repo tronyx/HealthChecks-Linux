@@ -24,9 +24,7 @@ rNasServerAddress=''
 
 # Location of the lock file that you can utilize to keep tests paused.
 tempDir='/tmp/'
-# The below temp dir is for use with the Tronitor script, uncomment the line if you wish to use it
-# https://github.com/christronyxyocum/tronitor
-#tempDir='/tmp/tronitor/'
+# Tronitor (https://github.com/tronyx/tronitor) uses /tmp by default; if you change this, set the same folder as lock_dir in tronitor.toml
 healthchecksLockFile="${tempDir}healthchecks.lock"
 
 # You will need to adjust the subDomain, appPort, subDir, and hcUUID variables for each application's function according to your setup

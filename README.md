@@ -166,12 +166,25 @@ While a check is paused, the script sends no ping for it. If you also pause the 
 
 ### 🤝 With Tronitor
 
-[Tronitor](https://github.com/tronyx/tronitor) pauses and unpauses your Healthchecks.io checks, manually or on a schedule. It also creates the lock files in `/tmp/tronitor/`. To use the script with Tronitor, change the `tempDir` variable at the top of the script:
+[Tronitor](https://github.com/tronyx/tronitor) pauses and unpauses your Healthchecks.io checks, manually or on a schedule. It also creates and removes the lock files. Tronitor puts the lock files in `/tmp` by default, and the script reads them from `/tmp/` by default. Thus, the two work together with no change.
+
+If you use a different folder, set the same folder in both places: `lock_dir` in `tronitor.toml`, and `tempDir` in the script. For example:
+
+```toml
+[general]
+lock_dir = "/tmp/tronitor"
+```
 
 ```bash
-#tempDir='/tmp/'
 tempDir='/tmp/tronitor/'
 ```
+
+Keep the `/` at the end of `tempDir`, because the script adds the file name directly after it. If the two folders are different, the script does not see the lock files, and it pings the paused checks.
+
+All users on the computer can write to `/tmp`. Thus, other users can create or delete the lock files. On a computer that other people use, set both values to a folder that only you can write to.
+
+> [!NOTE]
+> Older versions of this README told you to set `tempDir='/tmp/tronitor/'`. That was for the old Bash version of Tronitor. If you made that change, change `tempDir` back to `'/tmp/'`, or set `lock_dir = "/tmp/tronitor"` in `tronitor.toml`.
 
 ## 🩺 Troubleshooting
 
