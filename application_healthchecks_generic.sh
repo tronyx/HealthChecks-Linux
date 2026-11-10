@@ -918,7 +918,7 @@ check_rutorrent() {
     else
         if [[ "${extResponse}" = '401' ]] && [[ "${intResponse}" = '401' ]]; then
             ping_healthchecks
-        elif [[ "${extResponse}" != '200' ]] || [[ "${intResponse}" != '401' ]]; then
+        else
             ping_healthchecks fail
         fi
     fi
