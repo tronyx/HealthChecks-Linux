@@ -6,6 +6,10 @@ The project doesn't use version numbers. Each entry is one merge into `master`, 
 
 ## Unreleased
 
+Nothing yet.
+
+## 2026-11-10 · [#5](https://github.com/tronyx/HealthChecks-Linux/pull/5)
+
 HealthChecks Linux is rewritten in Python. The checks are mostly the same, but you must move your settings to a new configuration file. Read the lines marked **Breaking** before you update.
 
 ### Changed
