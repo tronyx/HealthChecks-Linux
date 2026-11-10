@@ -7,4 +7,4 @@ assignees: ''
 
 ---
 
-**Please provide the name of the application and, if applicable, the GitHub and Docker Hub repository URLs for the application**
+Please provide the name of the application and, if applicable, the GitHub and Docker Hub repository URLs for the application

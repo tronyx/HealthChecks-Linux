@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
 # Script to test various application reverse proxies, as well as their internal pages, and report to their respective Healthchecks.io checks
+# Deprecated: use healthchecks_linux.py instead; healthchecks_linux.py --migrate <this file> moves your settings
 # Tronyx
 
 # Define some variables

@@ -1,0 +1,592 @@
+# HealthChecks Linux configuration
+#
+# Copy this file to healthchecks.toml, next to healthchecks_linux.py or in
+# ~/.config/healthchecks-linux/, and edit the copy. For each check that you
+# want to run, set uuid to the UUID of its Healthchecks check, and set
+# enabled = true. Then test with:  python3 healthchecks_linux.py --dry-run
+#
+# Secrets: this file can hold your Organizr API key and the passwords in the
+# [auth.<name>] tables. If it does, make it readable only by you, or the
+# script refuses to run:  chmod 600 healthchecks.toml
+# You can also keep the secrets out of the file, in environment variables.
+# An environment variable that is set wins over the file:
+#   HCL_ORGANIZR_TOKEN  for organizr_token
+#   password_env        names the variable for each [auth.<name>] password
+
+[general]
+# The ping URL of Healthchecks. If you host Healthchecks yourself, use yours.
+ping_url = "https://hc-ping.com"
+# The folder of the lock files. Tronitor uses /tmp by default too.
+lock_dir = "/tmp"
+# Seconds to wait for each answer.
+timeout = 10
+# How many checks run at the same time.
+workers = 8
+# Send the result of each request with the ping, so that it shows in the
+# check's log on Healthchecks and in its alerts.
+send_details = true
+# Your Organizr API key. Probes with send_token = true send it in a "token"
+# header. If you do not use Organizr, leave it empty and nothing is sent.
+organizr_token = ""
+
+# Each name here can be used as {name} in a URL. Add more if you need them,
+# for example a second server or a second domain.
+[hosts]
+domain = "domain.com"
+primary = "192.168.1.103"
+unraid = ""
+unifi = ""
+vcenter = ""
+readynas = ""
+
+# HTTP basic auth for the probes that name these tables in auth.
+[auth.nagios]
+user = ""
+password = ""
+password_env = "HCL_NAGIOS_PASSWORD"
+
+[auth.readynas]
+user = ""
+password = ""
+password_env = "HCL_READYNAS_PASSWORD"
+
+# Each check has a name, the uuid of its Healthchecks check, and a list of
+# probes. A probe is one GET request. The check passes when every probe
+# passes, and then it pings Healthchecks with success; otherwise with fail.
+#
+# Probe settings:
+#   url               {name} is replaced with its value from [hosts].
+#   expect            The status codes that pass. Default: [200].
+#   follow_redirects  Follow redirects. Default: false.
+#   verify_tls        Check the HTTPS certificate. Default: true. Set it to
+#                     false for a self-signed certificate on your network.
+#   send_token        Send organizr_token in a "token" header. Default:
+#                     false. After a redirect, it is only sent to the same host.
+#   auth              The name of an [auth.<name>] table, for HTTP basic auth.
+#
+# The first probe is usually the reverse proxy URL and the second the
+# internal address. Each setup is different: you may use a subfolder where
+# this file uses a subdomain, or the opposite. Run --dry-run to see the
+# status code of each probe.
+
+[[check]]
+name = "organizr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}" },
+  { url = "http://{primary}:8889" },
+]
+
+[[check]]
+name = "adguard"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://adguard.{domain}/login.html", send_token = true },
+  { url = "http://{primary}/login.html" },
+]
+
+[[check]]
+name = "bazarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/bazarr/system/status", send_token = true },
+  { url = "http://{primary}:6767/bazarr/system/status" },
+]
+
+[[check]]
+name = "bitwarden"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://bitwarden.{domain}" },
+  { url = "http://{primary}:8484" },
+]
+
+[[check]]
+name = "chevereto"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://gallery.{domain}" },
+  { url = "http://{primary}:9292" },
+]
+
+[[check]]
+name = "dashbrr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://dashbrr.{domain}", send_token = true },
+  { url = "http://{primary}:8383" },
+]
+
+[[check]]
+name = "deluge"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/deluge/", send_token = true },
+  { url = "http://{primary}:8112" },
+]
+
+[[check]]
+name = "dozzle"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/dozzle/", send_token = true },
+  { url = "http://{primary}:8484/dozzle/" },
+]
+
+[[check]]
+name = "filebrowser"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://files.{domain}" },
+  { url = "http://{primary}:8585" },
+]
+
+[[check]]
+name = "forgejo"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://forgejo.{domain}", send_token = true },
+  { url = "http://{primary}:3000" },
+]
+
+[[check]]
+name = "gitea"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://gitea.{domain}", send_token = true },
+  { url = "http://{primary}:1234" },
+]
+
+[[check]]
+name = "gitlab"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://gitlab.{domain}/users/sign_in", send_token = true },
+  { url = "http://{primary}:444/users/sign_in" },
+]
+
+[[check]]
+name = "grafana"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://grafana.{domain}" },
+  { url = "http://{primary}:3000" },
+]
+
+[[check]]
+name = "guacamole"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/guac/", send_token = true },
+  { url = "http://{primary}:8080" },
+]
+
+[[check]]
+name = "immich"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://immich.{domain}", send_token = true },
+  { url = "http://{primary}:2283" },
+]
+
+[[check]]
+name = "jackett"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/jackett/UI/Login", send_token = true },
+  { url = "http://{primary}:9117/jackett/UI/Login" },
+]
+
+[[check]]
+name = "komodo"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://komodo.{domain}" },
+  { url = "http://{primary}:9120" },
+]
+
+# PLPP
+[[check]]
+name = "library"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://library.{domain}" },
+  { url = "http://{primary}:8383" },
+]
+
+[[check]]
+name = "lidarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/lidarr/", send_token = true },
+  { url = "http://{primary}:8686/lidarr/" },
+]
+
+[[check]]
+name = "logarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/logarr/", send_token = true },
+  { url = "http://{primary}:8000/logarr/" },
+]
+
+[[check]]
+name = "thelounge"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/thelounge/", send_token = true },
+  { url = "http://{primary}:9090" },
+]
+
+[[check]]
+name = "mediabutler"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/mediabutler/version/", send_token = true },
+  { url = "http://{primary}:9876/version/" },
+]
+
+[[check]]
+name = "monitorr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/monitorr/", send_token = true },
+  { url = "http://{primary}:8001/monitorr/" },
+]
+
+[[check]]
+name = "nagios"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://nagios.{domain}", send_token = true, auth = "nagios" },
+  { url = "http://{primary}:8787", auth = "nagios" },
+]
+
+[[check]]
+name = "navidrome"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/navidrome/app", send_token = true },
+  { url = "http://{primary}:4533/navidrome/app" },
+]
+
+[[check]]
+name = "netdata"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/netdata/", send_token = true, follow_redirects = true },
+  { url = "http://{primary}:9999/" },
+]
+
+[[check]]
+name = "netronome"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://netronome.{domain}", send_token = true },
+  { url = "http://{primary}:7575" },
+]
+
+[[check]]
+name = "nextcloud"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://nextcloud.{domain}", send_token = true, follow_redirects = true },
+  { url = "http://{primary}:9393", follow_redirects = true, verify_tls = false },
+]
+
+[[check]]
+name = "notifiarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/notifiarr/", send_token = true },
+  { url = "http://{primary}:5454/notifiarr/" },
+]
+
+[[check]]
+name = "nzbget"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/nzbget/", send_token = true },
+  { url = "http://{primary}:6789" },
+]
+
+# NZBHydra and NZBHydra2
+[[check]]
+name = "nzbhydra"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/nzbhydra/", send_token = true },
+  { url = "http://{primary}:5076/nzbhydra/" },
+]
+
+[[check]]
+name = "ombi"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/ombi/", send_token = true },
+  { url = "http://{primary}:3579/ombi/" },
+]
+
+[[check]]
+name = "overseerr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://overseerr.{domain}/login", send_token = true },
+  { url = "http://{primary}:5055/login" },
+]
+
+# For a subfolder, use https://{domain}/petio/ and http://{primary}:7777/petio/
+[[check]]
+name = "petio"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://petio.{domain}", send_token = true },
+  { url = "http://{primary}:7777" },
+]
+
+[[check]]
+name = "pihole"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://pihole.{domain}/admin/login.php", send_token = true },
+  { url = "http://{primary}" },
+]
+
+[[check]]
+name = "plex"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/plex/" },
+  { url = "http://{primary}:32400/identity" },
+]
+
+# The Plex authentication service, from the Plex status page. This does not
+# test your own server.
+[[check]]
+name = "plex_auth"
+uuid = ""
+enabled = false
+kind = "statuspage"
+url = "https://status.plex.tv/api/v2/components.json"
+component = "Authentication and API server"
+
+[[check]]
+name = "portainer"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/portainer/", send_token = true },
+  { url = "http://{primary}:9000" },
+]
+
+[[check]]
+name = "prowlarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/prowlarr/", send_token = true },
+  { url = "http://{primary}:9696/prowlarr/" },
+]
+
+[[check]]
+name = "qbittorrent"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/qbit/", send_token = true },
+  { url = "http://{primary}:8080" },
+]
+
+[[check]]
+name = "qui"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://qui.{domain}", send_token = true },
+  { url = "http://{primary}:7476" },
+]
+
+# If you turned on the login page in Radarr, add "login" to both URLs, for
+# example https://{domain}/radarr/login
+[[check]]
+name = "radarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/radarr/", send_token = true },
+  { url = "http://{primary}:7878/radarr/" },
+]
+
+# No reverse proxy probe: do not put your ReadyNAS admin page on the internet.
+[[check]]
+name = "readynas"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{readynas}/admin/", auth = "readynas", follow_redirects = true, verify_tls = false },
+]
+
+# ruTorrent asks for a password, so 401 is the expected answer.
+[[check]]
+name = "rutorrent"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://rutorrent.{domain}", send_token = true, expect = [401] },
+  { url = "http://{primary}:9080", expect = [401] },
+]
+
+[[check]]
+name = "sabnzbd"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/sabnzbd/", send_token = true },
+  { url = "http://{primary}:8580/sabnzbd/" },
+]
+
+[[check]]
+name = "snipe-it"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://snipe-it.{domain}/login", send_token = true },
+  { url = "http://{primary}:8005/login" },
+]
+
+# If you turned on the login page in Sonarr (Sonarr v4 asks for one), add
+# "login" to both URLs, for example https://{domain}/sonarr/login
+[[check]]
+name = "sonarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/sonarr/", send_token = true },
+  { url = "http://{primary}:9898/sonarr/" },
+]
+
+[[check]]
+name = "tautulli"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/tautulli/status", send_token = true },
+  { url = "http://{primary}:8181/tautulli/status" },
+]
+
+[[check]]
+name = "tdarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://tdarr.{domain}", send_token = true },
+  { url = "http://{primary}:8265" },
+]
+
+[[check]]
+name = "tracearr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://tracearr.{domain}", send_token = true },
+  { url = "http://{primary}:3000" },
+]
+
+[[check]]
+name = "transmission"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/transmission/web/index.html", send_token = true },
+  { url = "http://{primary}:9091/transmission/web/index.html" },
+]
+
+[[check]]
+name = "unifi_controller"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://unifi.{domain}", send_token = true, follow_redirects = true },
+  { url = "https://{unifi}:8443/manage/account/login", follow_redirects = true, verify_tls = false },
+]
+
+[[check]]
+name = "unifi_protect"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://nvr.{domain}", send_token = true, follow_redirects = true },
+  { url = "https://{unifi}:7443", follow_redirects = true, verify_tls = false },
+]
+
+# No reverse proxy probe: do not put your Unraid admin page on the internet.
+[[check]]
+name = "unraid"
+uuid = ""
+enabled = false
+probes = [
+  { url = "http://{unraid}/login" },
+]
+
+# No reverse proxy probe: do not put your vCenter on the internet.
+[[check]]
+name = "vcenter"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{vcenter}", verify_tls = false },
+]
+
+# No internal probe: XBackBone redirects its internal address to its domain.
+[[check]]
+name = "xbackbone"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://sharex.{domain}/login", send_token = true },
+]
+
+# No internal probe: Zipline redirects its internal address to its domain.
+[[check]]
+name = "zipline"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://zipline.{domain}/auth/login", send_token = true },
+]
