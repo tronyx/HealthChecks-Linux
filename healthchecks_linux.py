@@ -649,10 +649,11 @@ def send_ping(
     data = body.encode("utf-8")[:PING_BODY_LIMIT]
     headers = {"User-Agent": USER_AGENT, "Content-Type": "text/plain; charset=utf-8"}
     error = ""
+    opener = urllib.request.build_opener()
     for delay in (*PING_RETRY_DELAYS, None):
         request = urllib.request.Request(url, data=data, method="POST", headers=headers)
         try:
-            with urllib.request.urlopen(request, timeout=timeout) as response:
+            with opener.open(request, timeout=timeout) as response:
                 response.read(1024)
             return
         except urllib.error.HTTPError as exc:
@@ -809,10 +810,24 @@ class Migration:
     timeout: float = 10.0
     organizr_token: str = field(default="", repr=False)
     hosts: dict[str, str] = field(default_factory=dict)
+    host_vars: dict[str, str] = field(default_factory=dict)
     auths: dict[str, Credentials] = field(default_factory=dict)
     checks: list[str] = field(default_factory=list)
     uuids: dict[str, str] = field(default_factory=dict)
     report: list[str] = field(default_factory=list)
+
+
+@dataclass
+class _CheckBody:
+    """What --migrate reads from one Bash check function, and the reasons to disable the check."""
+
+    local: dict[str, str] = field(default_factory=dict)
+    curls: list[tuple[str, str]] = field(default_factory=list)
+    literals: dict[str, str] = field(default_factory=dict)
+    expected: dict[str, str] = field(default_factory=dict)
+    statuspage: bool = False
+    missing: list[str] = field(default_factory=list)
+    problems: list[str] = field(default_factory=list)
 
 
 def _plural(count: int, noun: str) -> str:
@@ -915,94 +930,108 @@ def _toml(value: object) -> str:
     return json.dumps(value, ensure_ascii=False)
 
 
-def _migrate_check(
-    name: str, body: Sequence[str], host_vars: Mapping[str, str], migration: Migration
-) -> tuple[str, list[str]] | None:
-    """Translate one check function; return its [[check]] table and the reasons to disable it, or None to skip it."""
-    local: dict[str, str] = {}
-    curls: list[tuple[str, str]] = []
-    literals: dict[str, str] = {}
-    expected: dict[str, str] = {}
+def _scan_check_body(body: Sequence[str]) -> _CheckBody:
+    """Sort the uncommented lines of a check function into variables, curl commands, literal responses and codes."""
+    parsed = _CheckBody(statuspage=any("status.plex.tv" in line for line in body))
     for line in body:
         if line.lstrip().startswith("#"):
             continue
         if curl_match := BASH_CURL_RE.match(line):
-            curls.append((curl_match.group(1), curl_match.group(2)))
+            parsed.curls.append((curl_match.group(1), curl_match.group(2)))
         elif literal_match := BASH_LITERAL_RE.match(line):
-            literals[literal_match.group(1)] = literal_match.group(2)
-        elif not expected and "if [[" in line:
-            expected = dict(BASH_EXPECT_RE.findall(line))
+            parsed.literals[literal_match.group(1)] = literal_match.group(2)
+        elif not parsed.expected and "if [[" in line:
+            parsed.expected = dict(BASH_EXPECT_RE.findall(line))
         elif assign_match := BASH_ASSIGN_RE.match(line):
-            local[assign_match.group(1)] = _bash_value(assign_match)
-    uuid = local.get("hcUUID", "").strip().lower()
-    problems: list[str] = []
+            parsed.local[assign_match.group(1)] = _bash_value(assign_match)
+    return parsed
+
+
+def _migrate_uuid(name: str, parsed: _CheckBody, migration: Migration) -> str:
+    """Return the check's hcUUID, or "" with a problem when it is empty, not a UUID, or used by another check."""
+    uuid = parsed.local.get("hcUUID", "").strip().lower()
     if not uuid:
-        problems.append("hcUUID is empty")
-    elif not UUID_RE.fullmatch(uuid):
-        problems.append("hcUUID is not a valid UUID")
-        uuid = ""
-    elif uuid in migration.uuids:
-        problems.append(f"check {migration.uuids[uuid]} has the same hcUUID")
-        uuid = ""
-    else:
-        migration.uuids[uuid] = name
-    if any("status.plex.tv" in line for line in body):
-        table = (
-            f"[[check]]\nname = {_toml(name)}\nuuid = {_toml(uuid)}\n"
-            + ("enabled = false\n" if problems else "")
-            + f'kind = "statuspage"\nurl = {_toml(PLEX_STATUS_URL)}\ncomponent = {_toml(PLEX_AUTH_COMPONENT)}\n'
-        )
-        return table, problems
+        parsed.problems.append("hcUUID is empty")
+        return ""
+    if not UUID_RE.fullmatch(uuid):
+        parsed.problems.append("hcUUID is not a valid UUID")
+        return ""
+    if uuid in migration.uuids:
+        parsed.problems.append(f"check {migration.uuids[uuid]} has the same hcUUID")
+        return ""
+    migration.uuids[uuid] = name
+    return uuid
+
+
+def _url_problems(url: str, name: str, migration: Migration) -> list[str]:
+    """Return why a translated URL cannot work: an empty host, or a URL that is not valid."""
+    problems = [f"[hosts] {host} is empty" for host in PLACEHOLDER_RE.findall(url) if not migration.hosts.get(host)]
+    try:
+        _check_url(PLACEHOLDER_RE.sub("host", url), name, "url")
+    except ConfigError:
+        problems.append(f"the URL {url} is not valid")
+    return problems
+
+
+def _migrate_probe(name: str, variable: str, curl: _Curl, parsed: _CheckBody, migration: Migration) -> str:
+    """Return the inline probe table for one curl command of a check."""
+    url = _expand(curl.url, parsed.local, migration.host_vars, parsed.missing).split("#", 1)[0]
+    settings = [f"url = {_toml(url)}"]
+    if any(header.replace(" ", "").lower().startswith("token:$") for header in curl.headers):
+        settings.append("send_token = true")
+    if curl.follow:
+        settings.append("follow_redirects = true")
+    if curl.insecure and url.startswith("https://"):
+        settings.append("verify_tls = false")
+    if curl.user:
+        auth = _migrate_auth(name, curl.user, parsed.local, migration)
+        if auth:
+            settings.append(f"auth = {_toml(auth)}")
+        else:
+            parsed.problems.append("its curl -u login has an empty or unknown user name or password")
+    code = int(parsed.expected.get(variable, "200"))
+    if code != 200:
+        settings.append(f"expect = [{code}]")
+    migration.timeout = max(migration.timeout, curl.max_time)
+    parsed.problems.extend(_url_problems(url, name, migration))
+    return "  { " + ", ".join(settings) + " },"
+
+
+def _check_table(name: str, uuid: str, disabled: bool, rest: str) -> str:
+    """Return a [[check]] table: its name, uuid, enabled = false when disabled, then rest."""
+    return f"[[check]]\nname = {_toml(name)}\nuuid = {_toml(uuid)}\n" + ("enabled = false\n" if disabled else "") + rest
+
+
+def _report_unused(name: str, parsed: _CheckBody, migration: Migration) -> None:
+    """Report the literal responses that always fail, and the variables a check uses without setting them."""
+    for variable, value in parsed.literals.items():
+        if value != parsed.expected.get(variable, "200"):
+            migration.report.append(f"Skipped: {variable}='{value}' in check {name} (it always fails the check)")
+    for variable in dict.fromkeys(parsed.missing):
+        migration.report.append(f"Note: check {name} uses ${{{variable}}} without setting it; it is now empty")
+
+
+def _migrate_check(name: str, body: Sequence[str], migration: Migration) -> tuple[str, list[str]] | None:
+    """Translate one check function; return its [[check]] table and the reasons to disable it, or None to skip it."""
+    parsed = _scan_check_body(body)
+    uuid = _migrate_uuid(name, parsed, migration)
+    if parsed.statuspage:
+        rest = f'kind = "statuspage"\nurl = {_toml(PLEX_STATUS_URL)}\ncomponent = {_toml(PLEX_AUTH_COMPONENT)}\n'
+        return _check_table(name, uuid, bool(parsed.problems), rest), parsed.problems
     probes: list[str] = []
-    missing: list[str] = []
-    for variable, command in curls:
+    for variable, command in parsed.curls:
         try:
             curl = _parse_curl(command)
         except ValueError:
             migration.report.append(f"Skipped: a curl command in check {name} (cannot read its quoting)")
             continue
-        url = _expand(curl.url, local, host_vars, missing).split("#", 1)[0]
-        settings = [f"url = {_toml(url)}"]
-        if any(header.replace(" ", "").lower().startswith("token:$") for header in curl.headers):
-            settings.append("send_token = true")
-        if curl.follow:
-            settings.append("follow_redirects = true")
-        if curl.insecure and url.startswith("https://"):
-            settings.append("verify_tls = false")
-        if curl.user:
-            auth = _migrate_auth(name, curl.user, local, migration)
-            if auth:
-                settings.append(f"auth = {_toml(auth)}")
-            else:
-                problems.append("its curl -u login has an empty or unknown user name or password")
-        code = int(expected.get(variable, "200"))
-        if code != 200:
-            settings.append(f"expect = [{code}]")
-        migration.timeout = max(migration.timeout, curl.max_time)
-        for host in PLACEHOLDER_RE.findall(url):
-            if not migration.hosts.get(host):
-                problems.append(f"[hosts] {host} is empty")
-        try:
-            _check_url(PLACEHOLDER_RE.sub("host", url), name, "url")
-        except ConfigError:
-            problems.append(f"the URL {url} is not valid")
-        probes.append("  { " + ", ".join(settings) + " },")
-    for variable, value in literals.items():
-        if value != expected.get(variable, "200"):
-            migration.report.append(f"Skipped: {variable}='{value}' in check {name} (it always fails the check)")
-    for variable in dict.fromkeys(missing):
-        migration.report.append(f"Note: check {name} uses ${{{variable}}} without setting it; it is now empty")
+        probes.append(_migrate_probe(name, variable, curl, parsed, migration))
+    _report_unused(name, parsed, migration)
     if not probes:
         migration.report.append(f"Skipped: check {name} (no curl probe to translate)")
         return None
-    table = (
-        f"[[check]]\nname = {_toml(name)}\nuuid = {_toml(uuid)}\n"
-        + ("enabled = false\n" if problems else "")
-        + "probes = [\n"
-        + "\n".join(probes)
-        + "\n]\n"
-    )
-    return table, list(dict.fromkeys(problems))
+    rest = "probes = [\n" + "\n".join(probes) + "\n]\n"
+    return _check_table(name, uuid, bool(parsed.problems), rest), list(dict.fromkeys(parsed.problems))
 
 
 def _migrate_auth(name: str, login: str, local: Mapping[str, str], migration: Migration) -> str:
@@ -1015,54 +1044,60 @@ def _migrate_auth(name: str, login: str, local: Mapping[str, str], migration: Mi
     return auth_name
 
 
+def _migrate_setting(variable: str, value: str, migration: Migration) -> None:
+    """Carry over one variable from the top of the Bash script, or report why it is skipped."""
+    if variable == "healthchecksLockFile":
+        return
+    if "$" in value:
+        migration.report.append(f"Skipped: {variable} (its value uses another variable)")
+    elif variable == "orgAPIKey":
+        migration.organizr_token = value.strip()
+    elif variable == "hcPingDomain":
+        migration.ping_url = value.strip().rstrip("/") or DEFAULT_PING_URL
+    elif variable == "tempDir":
+        migration.lock_dir = value.rstrip("/") or "/"
+    elif variable in BASH_NOT_HOSTS:
+        return
+    elif value and not HOST_VALUE_RE.fullmatch(value):
+        migration.report.append(f"Skipped: {variable} (not a host name or an IP address)")
+    else:
+        host = _host_name(variable, migration.hosts)
+        migration.host_vars[variable] = host
+        migration.hosts[host] = value
+
+
+def _migrate_function(function: str, functions: Mapping[str, Sequence[str]], migration: Migration) -> None:
+    """Translate one check that main runs, and report it if it is missing or must be disabled."""
+    name = function.removeprefix("check_")
+    if function not in functions:
+        migration.report.append(f"Skipped: check {name} (main runs it, but the script has no {function} function)")
+        return
+    result = _migrate_check(name, functions[function], migration)
+    if result is None:
+        return
+    table, problems = result
+    migration.checks.append(table)
+    if problems:
+        migration.report.append(f"Disabled: check {name} ({'; '.join(problems)}); fix it, then set enabled = true")
+
+
 def migrate_bash(text: str) -> Migration:
     """Read the settings of a configured HealthChecks-Linux Bash script; a file that is not one raises ConfigError."""
     header, functions = _bash_functions(text.splitlines())
     if "main" not in functions or not any(line.startswith("hcPingDomain=") for line in header):
         raise ConfigError("this does not look like the HealthChecks-Linux Bash script (no hcPingDomain or main)")
     migration = Migration()
-    host_vars: dict[str, str] = {}
     for line in header:
-        match = BASH_ASSIGN_RE.match(line)
-        if not match:
-            continue
-        variable, value = match.group(1), _bash_value(match)
-        if variable == "healthchecksLockFile":
-            continue
-        if "$" in value:
-            migration.report.append(f"Skipped: {variable} (its value uses another variable)")
-        elif variable == "orgAPIKey":
-            migration.organizr_token = value.strip()
-        elif variable == "hcPingDomain":
-            migration.ping_url = value.strip().rstrip("/") or DEFAULT_PING_URL
-        elif variable == "tempDir":
-            migration.lock_dir = value.rstrip("/") or "/"
-        elif variable not in BASH_NOT_HOSTS:
-            if value and not HOST_VALUE_RE.fullmatch(value):
-                migration.report.append(f"Skipped: {variable} (not a host name or an IP address)")
-                continue
-            host = _host_name(variable, migration.hosts)
-            host_vars[variable] = host
-            migration.hosts[host] = value
-    calls = list(
-        dict.fromkeys(match.group(1) for line in functions["main"] if (match := BASH_MAIN_CALL_RE.match(line)))
-    )
-    not_run = sum(1 for line in functions["main"] if re.match(r"^\s*#\s*check_", line))
+        if match := BASH_ASSIGN_RE.match(line):
+            _migrate_setting(match.group(1), _bash_value(match), migration)
+    main_body = functions["main"]
+    calls = dict.fromkeys(match.group(1) for line in main_body if (match := BASH_MAIN_CALL_RE.match(line)))
+    not_run = sum(1 for line in main_body if re.match(r"^\s*#\s*check_", line))
     migration.report.append(f"Carried over: ping_url, lock_dir and {_plural(len(migration.hosts), 'host')}")
     if migration.organizr_token:
         migration.report.append("Carried over: the Organizr API key, as organizr_token")
     for function in calls:
-        name = function.removeprefix("check_")
-        if function not in functions:
-            migration.report.append(f"Skipped: check {name} (main runs it, but the script has no {function} function)")
-            continue
-        result = _migrate_check(name, functions[function], host_vars, migration)
-        if result is None:
-            continue
-        table, problems = result
-        migration.checks.append(table)
-        if problems:
-            migration.report.append(f"Disabled: check {name} ({'; '.join(problems)}); fix it, then set enabled = true")
+        _migrate_function(function, functions, migration)
     migration.report.append(f"Carried over: {_plural(len(migration.checks), 'check')} that main runs")
     if migration.auths:
         migration.report.append(f"Carried over: the basic auth logins of {', '.join(migration.auths)}")
@@ -1174,28 +1209,36 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-def main(argv: Sequence[str] | None = None, env: Mapping[str, str] | None = None) -> int:
-    """Run the command line program and return its exit code."""
-    args = parse_args(argv)
-    env = os.environ if env is None else env
-    if args.migrate is not None:
-        target = args.config or config_search_paths(Path(__file__).resolve(), env)[0]
-        try:
-            run_migrate(args.migrate, target.expanduser(), args.force, sys.stdout)
-        except ConfigError as exc:
-            print(f"healthchecks-linux: {exc}", file=sys.stderr)
-            return EXIT_USAGE
-        return EXIT_OK
+def _usage_error(exc: ConfigError) -> int:
+    """Print a configuration or usage error and return its exit code."""
+    print(f"healthchecks-linux: {exc}", file=sys.stderr)
+    return EXIT_USAGE
+
+
+def _main_migrate(args: argparse.Namespace, env: Mapping[str, str]) -> int:
+    """Run --migrate and return the exit code."""
+    target = args.config or config_search_paths(Path(__file__).resolve(), env)[0]
     try:
-        path = find_config(args.config, env, config_search_paths(Path(__file__).resolve(), env))
-        config = load_config(path, env)
-        checks = select_checks(config, args.only)
+        run_migrate(args.migrate, target.expanduser(), args.force, sys.stdout)
     except ConfigError as exc:
-        print(f"healthchecks-linux: {exc}", file=sys.stderr)
-        return EXIT_USAGE
-    if args.list:
-        list_checks(config, sys.stdout)
-        return EXIT_OK
+        return _usage_error(exc)
+    return EXIT_OK
+
+
+def _report_results(args: argparse.Namespace, results: Sequence[CheckResult]) -> int:
+    """Print the results that the options ask for and each ping error, and return the exit code."""
+    for result in results:
+        if args.verbose or args.dry_run:
+            print(format_result(result))
+        if result.ping_error:
+            print(f"healthchecks-linux: {result.ping_error}", file=sys.stderr)
+    if args.dry_run:
+        return EXIT_ERROR if any(result.state == FAIL for result in results) else EXIT_OK
+    return EXIT_ERROR if any(result.ping_error for result in results) else EXIT_OK
+
+
+def _main_run(args: argparse.Namespace, config: Config, checks: Sequence[Check]) -> int:
+    """Run the checks unless a lock stops them, and return the exit code."""
     global_lock = config.lock_dir / GLOBAL_LOCK_NAME
     if global_lock.exists():
         if args.verbose or args.dry_run:
@@ -1209,26 +1252,37 @@ def main(argv: Sequence[str] | None = None, env: Mapping[str, str] | None = None
         try:
             run_lock = acquire_run_lock(config.lock_dir)
         except ConfigError as exc:
-            print(f"healthchecks-linux: {exc}", file=sys.stderr)
-            return EXIT_USAGE
+            return _usage_error(exc)
         if run_lock is None:
             print("healthchecks-linux: the previous run is still going, so this run is skipped", file=sys.stderr)
             return EXIT_OK
-    token = config.organizr_token
     try:
         with ThreadPoolExecutor(max_workers=min(config.workers, len(checks))) as pool:
-            results = list(pool.map(lambda check: run_check(check, config, token, not args.dry_run), checks))
+            results = list(
+                pool.map(lambda check: run_check(check, config, config.organizr_token, not args.dry_run), checks)
+            )
     finally:
         if run_lock is not None:
             os.close(run_lock)
-    for result in results:
-        if args.verbose or args.dry_run:
-            print(format_result(result))
-        if result.ping_error:
-            print(f"healthchecks-linux: {result.ping_error}", file=sys.stderr)
-    if args.dry_run:
-        return EXIT_ERROR if any(result.state == FAIL for result in results) else EXIT_OK
-    return EXIT_ERROR if any(result.ping_error for result in results) else EXIT_OK
+    return _report_results(args, results)
+
+
+def main(argv: Sequence[str] | None = None, env: Mapping[str, str] | None = None) -> int:
+    """Run the command line program and return its exit code."""
+    args = parse_args(argv)
+    env = os.environ if env is None else env
+    if args.migrate is not None:
+        return _main_migrate(args, env)
+    try:
+        path = find_config(args.config, env, config_search_paths(Path(__file__).resolve(), env))
+        config = load_config(path, env)
+        checks = select_checks(config, args.only)
+    except ConfigError as exc:
+        return _usage_error(exc)
+    if args.list:
+        list_checks(config, sys.stdout)
+        return EXIT_OK
+    return _main_run(args, config, checks)
 
 
 if __name__ == "__main__":
