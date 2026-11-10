@@ -227,7 +227,7 @@ check_forgejo() {
     subDomain='forgejo'
     appPort='3000'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
@@ -246,7 +246,7 @@ check_gitea() {
     subDomain='gitea'
     appPort='1234'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
@@ -323,7 +323,7 @@ check_immich() {
     subDomain='immich'
     appPort='2283'
     hcUUID=''
-    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}""${subDir}" -H "token: ${orgAPIKey}")
+    extResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 https://"${subDomain}"."${domain}" -H "token: ${orgAPIKey}")
     intResponse=$(curl -w "%{http_code}\n" -sI -o /dev/null --connect-timeout 10 -m 10 http://"${primaryServerAddress}":"${appPort}")
     appLockFile="${tempDir}${hcUUID}".lock
     if [ -e "${appLockFile}" ]; then
@@ -694,6 +694,8 @@ check_overseerr() {
 # Comment out whichever one you do not use.
 check_petio() {
     subDomain='petio'
+    # Must stay set, or the internal check uses the subDir of the previous check
+    subDir=''
     #subDir='/petio/'
     appPort='7777'
     hcUUID=''
