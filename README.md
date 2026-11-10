@@ -385,6 +385,8 @@ The Python script does not run on Windows. [HalianElf](https://github.com/Halian
 
 If you have questions, you can find me on the [Organizr Discord](https://organizr.app/discord). To report a bug, [open an issue](https://github.com/tronyx/HealthChecks-Linux/issues).
 
+To suggest an application or send a change, read the [contributing guide](.github/CONTRIBUTING.md). Pull requests go to the `develop` branch. To report a security problem, do not open an issue. Follow the [security policy](.github/SECURITY.md) instead.
+
 ## 📄 License
 
 The license is MIT. See [LICENSE.md](LICENSE.md).

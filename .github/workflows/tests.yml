@@ -95,13 +95,15 @@ jobs:
       # The Bash script stays until the Python version replaces it.
       - run: shellcheck -S warning application_healthchecks_generic.sh
 
-  # Writes the coverage total to coverage-master.json on the badges branch,
-  # which the README's coverage badge reads through shields.io. Only runs for
-  # pushes to master, once the coverage job has combined the coverage.
+  # Writes the coverage total to coverage-<branch>.json on the badges branch,
+  # which the README's coverage badge reads through shields.io (master's; the
+  # README doesn't show develop's, but it's kept up to date too). Only runs
+  # for pushes to master and develop, once the coverage job has combined the
+  # coverage.
   coverage-badge:
     name: Update the coverage badge
     needs: coverage
-    if: github.event_name == 'push' && github.ref_name == 'master'
+    if: github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'develop')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -136,4 +138,7 @@ jobs:
           git -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -qm "Coverage on $BRANCH: $total%"
-          git push origin HEAD:badges
+          # A push to the other branch may have updated its badge in the meantime.
+          git push origin HEAD:badges || {
+            git pull -q --rebase origin badges && git push origin HEAD:badges
+          }
