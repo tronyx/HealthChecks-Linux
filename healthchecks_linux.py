@@ -47,7 +47,7 @@ else:
             print(f"healthchecks-linux: Python 3.10 or newer is needed, but this is Python {_version}", file=sys.stderr)
         sys.exit(2)
 
-__version__ = "2026-11-10"
+__version__ = "2026-11-11"
 
 EXIT_OK = 0
 EXIT_ERROR = 1
