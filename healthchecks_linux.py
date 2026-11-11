@@ -1132,7 +1132,7 @@ def render_migration(migration: Migration, source: Path) -> str:
             f"password = {_toml(credentials.password)}",
             "",
         ]
-    return "\n".join(lines) + "\n".join(migration.checks)
+    return "\n".join([*lines, *migration.checks])
 
 
 def write_migrated_config(target: Path, text: str) -> None:

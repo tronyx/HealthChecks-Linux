@@ -1,5 +1,6 @@
 """Tests for --migrate: writing healthchecks.toml from a configured copy of the Bash script."""
 
+import itertools
 import stat
 from pathlib import Path
 
@@ -184,6 +185,23 @@ def test_migrated_checks(migrated: tuple[Path, str]) -> None:
 def test_migrated_hosts(migrated: tuple[Path, str]) -> None:
     text = migrated[0].read_text(encoding="utf-8")
     assert '[hosts]\ndomain = "example.test"\ndocker = "10.0.0.5"\nunifi_nvr = "10.0.0.6"\nempty = ""\n' in text
+
+
+@pytest.mark.parametrize(
+    ("text", "has_auth"),
+    [(CONFIGURED, True), (CONFIGURED.replace("    check_nagios\n", ""), False)],
+    ids=["checks after the auth tables", "checks after the hosts"],
+)
+def test_migrated_tables_follow_a_blank_line(tmp_path: Path, text: str, has_auth: bool) -> None:
+    script = tmp_path / "application_healthchecks_generic.sh"
+    script.write_text(text, encoding="utf-8")
+    target = tmp_path / "healthchecks.toml"
+    assert main(["--migrate", str(script), "-c", str(target)], {}) == 0
+    migrated = target.read_text(encoding="utf-8")
+    assert ("\n[auth." in migrated) is has_auth
+    lines = migrated.split("\n")
+    assert [line for before, line in itertools.pairwise(lines) if line.startswith("[") and before] == []
+    assert migrated.endswith("]\n")
 
 
 def test_migration_report(migrated: tuple[Path, str]) -> None:

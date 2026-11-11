@@ -6,7 +6,9 @@ The project doesn't use version numbers. Each entry is one merge into `master`, 
 
 ## Unreleased
 
-Nothing yet.
+### Fixed
+
+- `--migrate` puts a blank line before the first `[[check]]` table in the file that it writes. Before, that table came right after the last line of `[hosts]` or of an `[auth.<name>]` table. The file worked the same, but it was harder to read.
 
 ## 2026-11-10 · [#5](https://github.com/tronyx/HealthChecks-Linux/pull/5)
 
