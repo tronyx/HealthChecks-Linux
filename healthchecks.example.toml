@@ -182,8 +182,8 @@ name = "grafana"
 uuid = ""
 enabled = false
 probes = [
-  { url = "https://grafana.{domain}" },
-  { url = "http://{primary}:3000" },
+  { url = "https://grafana.{domain}/login/" },
+  { url = "http://{primary}:3000/login/" },
 ]
 
 [[check]]
