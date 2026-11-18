@@ -8,6 +8,12 @@ The project doesn't use version numbers. Each entry is one merge into `master`, 
 
 Nothing yet.
 
+## 2026-11-18 · [#8](https://github.com/tronyx/HealthChecks-Linux/pull/8)
+
+### Added
+
+- The example configuration has a `clonarr` check for Clonarr. It tries `https://{domain}/clonarr/api/health` and then `http://{primary}:6060/clonarr/api/health`. Like every check in the example configuration, it is disabled until you give it a UUID and set `enabled = true`.
+
 ## 2026-11-11 · [#6](https://github.com/tronyx/HealthChecks-Linux/pull/6)
 
 ### Fixed

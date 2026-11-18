@@ -115,6 +115,15 @@ probes = [
 ]
 
 [[check]]
+name = "clonarr"
+uuid = ""
+enabled = false
+probes = [
+  { url = "https://{domain}/clonarr/api/health" },
+  { url = "http://{primary}:6060/clonarr/api/health" },
+]
+
+[[check]]
 name = "dashbrr"
 uuid = ""
 enabled = false
