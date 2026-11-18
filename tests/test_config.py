@@ -268,7 +268,7 @@ def test_unreadable_file(tmp_path: Path) -> None:
 def test_example_config_loads_with_every_check_disabled() -> None:
     config = load_config(EXAMPLE, {})
     names = [check.name for check in config.checks]
-    assert len(names) == len(set(names)) == 57
+    assert len(names) == len(set(names)) == 58
     assert not any(check.enabled for check in config.checks)
     assert "plex_auth" in names and "rutorrent" in names
 

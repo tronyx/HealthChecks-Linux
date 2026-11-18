@@ -29,7 +29,7 @@ The [changelog](CHANGELOG.md) lists every change by release.
 The script has these features:
 
 - 🌐 It tests the reverse proxy URL and the internal URL of each application.
-- 📋 Its example configuration has checks for 57 applications and services, for example Plex, Sonarr, Radarr, Organizr, and Unifi. See [Supported applications](#-supported-applications).
+- 📋 Its example configuration has checks for 58 applications and services, for example Plex, Sonarr, Radarr, Organizr, and Unifi. See [Supported applications](#-supported-applications).
 - 🔐 It works with Organizr authentication. It sends your Organizr API key only to your applications, never to Healthchecks.io. You can also use it without Organizr.
 - 🏠 It works with Healthchecks.io and with a self-hosted Healthchecks server.
 - ⚡ It runs several checks at the same time. If a run is still busy when the next run starts, the next run stops, so two runs never overlap.
@@ -238,20 +238,20 @@ The example configuration has a check for each of these applications:
 | | | | |
 | --- | --- | --- | --- |
 | AdGuard | Bazarr | Bitwarden | Chevereto |
-| Dashbrr | Deluge | Dozzle | Filebrowser |
-| Forgejo | Gitea | GitLab | Grafana |
-| Guacamole | Immich | Jackett | Komodo |
-| Lidarr | Logarr | Mediabutler | Monitorr |
-| Nagios | Navidrome | Netdata | Netronome |
-| Nextcloud | Notifiarr | NZBGet | NZBHydra / NZBHydra2 |
-| Ombi | Organizr | Overseerr | Petio |
-| Pi-hole | Plex | Plex authentication service (`plex_auth`) | PLPP (`library`) |
-| Portainer | Prowlarr | qBittorrent | qui |
-| Radarr | ReadyNAS | ruTorrent | SABnzbd |
-| Snipe-IT | Sonarr | Tautulli | Tdarr |
-| TheLounge | Tracearr | Transmission | Unifi Controller |
-| Unifi Protect | Unraid | vCenter | XBackBone |
-| Zipline | | | |
+| Clonarr | Dashbrr | Deluge | Dozzle |
+| Filebrowser | Forgejo | Gitea | GitLab |
+| Grafana | Guacamole | Immich | Jackett |
+| Komodo | Lidarr | Logarr | Mediabutler |
+| Monitorr | Nagios | Navidrome | Netdata |
+| Netronome | Nextcloud | Notifiarr | NZBGet |
+| NZBHydra / NZBHydra2 | Ombi | Organizr | Overseerr |
+| Petio | Pi-hole | Plex | Plex authentication service (`plex_auth`) |
+| PLPP (`library`) | Portainer | Prowlarr | qBittorrent |
+| qui | Radarr | ReadyNAS | ruTorrent |
+| SABnzbd | Snipe-IT | Sonarr | Tautulli |
+| Tdarr | TheLounge | Tracearr | Transmission |
+| Unifi Controller | Unifi Protect | Unraid | vCenter |
+| XBackBone | Zipline | | |
 
 The name of each check is the name of the application in lowercase, for example `sonarr`.
 
