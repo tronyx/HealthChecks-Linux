@@ -120,7 +120,7 @@ uuid = ""
 enabled = false
 probes = [
   { url = "https://{domain}/clonarr/api/health" },
-  { url = "http://{primary}:6060/clonarr/" },
+  { url = "http://{primary}:6060/clonarr/api/health" },
 ]
 
 [[check]]
