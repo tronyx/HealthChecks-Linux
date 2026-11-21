@@ -96,6 +96,33 @@ def test_secrets_do_not_follow_a_redirect_to_another_host(server: FakeServer, ot
     assert "authorization" not in landing.headers
 
 
+def test_probe_sends_its_own_host_by_default(server: FakeServer) -> None:
+    server.answer("/", Answer(200))
+    run_probe(Probe(f"{server.url}/"), "", 5)
+    assert server.requests[0].headers["host"] == server.host
+
+
+def test_probe_sends_the_host_that_it_names(server: FakeServer) -> None:
+    # Snipe-IT 8.8.4 answers 400 to a Host header other than the host of its APP_URL.
+    server.answer("/health", Answer(200))
+    assert run_probe(Probe(f"{server.url}/health", host="snipe-it.example.test"), "", 5).passed
+    assert server.requests[0].headers["host"] == "snipe-it.example.test"
+
+
+def test_host_follows_a_redirect_to_the_same_host(server: FakeServer) -> None:
+    server.answer("/old", Answer(301, headers={"Location": "/new"}))
+    server.answer("/new", Answer(200))
+    run_probe(Probe(f"{server.url}/old", follow_redirects=True, host="app.example.test"), "", 5)
+    assert server.requests_to("/new")[0].headers["host"] == "app.example.test"
+
+
+def test_host_does_not_follow_a_redirect_to_another_host(server: FakeServer, other_server: FakeServer) -> None:
+    server.answer("/old", Answer(302, headers={"Location": f"{other_server.url}/landing"}))
+    other_server.answer("/landing", Answer(200))
+    assert run_probe(Probe(f"{server.url}/old", follow_redirects=True, host="app.example.test"), "", 5).passed
+    assert other_server.requests[0].headers["host"] == other_server.host
+
+
 def test_basic_auth_header(server: FakeServer) -> None:
     server.answer("/", Answer(200))
     run_probe(Probe(f"{server.url}/", auth=Credentials("admin", "pw:with:colons")), "", 5)

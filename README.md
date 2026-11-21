@@ -146,6 +146,7 @@ Each probe is one GET request. A probe has these settings:
 | `verify_tls` | If `false`, the probe accepts any HTTPS certificate. Use it for a self-signed certificate on your own network | `true` |
 | `send_token` | If `true`, the probe sends your Organizr API key in a `token` header | `false` |
 | `auth` | The name of an `[auth.<name>]` table. See [Secrets](#-secrets) | |
+| `host` | The host name that the probe sends in the `Host` header, for example `snipe-it.{domain}`. It can use the names from `[hosts]`. Use it when an application answers only to its public name. A redirect to another host does not get it | The host of `url` |
 
 This check tests Sonarr through the reverse proxy and on the server:
 
@@ -315,6 +316,7 @@ All users on the computer can write to `/tmp`. Thus, other users can create or d
 | A probe returns `301` or `302` | The URL redirects to a different URL. Find the final URL with the command below, and use that URL in the probe. Or set `follow_redirects = true` |
 | An Arr application with a login page fails | If you turned on the login page (authentication) in Sonarr, Radarr, Prowlarr, or another Arr application, add `login` to the URLs, for example `https://{domain}/sonarr/login` |
 | An external probe fails, but the internal probe passes | Make sure that the subdomain or the subfolder in the probe agrees with your reverse proxy. If you use Organizr, make sure that `organizr_token` is correct and that the probe has `send_token = true` |
+| An internal probe returns `400`, but the external probe passes | The application accepts only its public host name, as Snipe-IT does since 8.8.4. Set `host` on the internal probe to that name, for example `host = "snipe-it.{domain}"` |
 | A probe shows `error: timed out` or `Connection refused` | The script did not get an answer. Make sure that the address and the port are correct, and that the host that runs the script can connect to them |
 | A probe shows `CERTIFICATE_VERIFY_FAILED` | The HTTPS certificate is not valid, for example because it is self-signed. If the address is on your own network, set `verify_tls = false` on the probe |
 | The script shows `the previous run is still going, so this run is skipped` | A run takes longer than the time between two runs. Lower `timeout`, increase `workers`, or run the script less often |

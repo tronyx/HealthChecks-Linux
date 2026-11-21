@@ -82,7 +82,8 @@ TOP_KEYS = ("general", "hosts", "auth", "check")
 GENERAL_KEYS = ("ping_url", "lock_dir", "timeout", "workers", "send_details", "organizr_token")
 AUTH_KEYS = ("user", "password", "password_env")
 CHECK_KEYS = ("name", "uuid", "enabled", "kind", "probes", "url", "component")
-PROBE_KEYS = ("url", "expect", "follow_redirects", "verify_tls", "send_token", "auth")
+PROBE_KEYS = ("url", "expect", "follow_redirects", "verify_tls", "send_token", "auth", "host")
+HOST_RE = re.compile(r"[A-Za-z0-9.-]+(:[0-9]{1,5})?")
 KINDS = ("http", "statuspage")
 
 
@@ -120,6 +121,7 @@ class Probe:
     verify_tls: bool = True
     send_token: bool = False
     auth: Credentials | None = None
+    host: str = ""
 
 
 @dataclass(frozen=True)
@@ -225,7 +227,7 @@ def _check_url(url: str, where: str, what: str) -> str:
     return url
 
 
-def _fill(template: str, hosts: Mapping[str, str], where: str) -> str:
+def _fill(template: str, hosts: Mapping[str, str], where: str, what: str = "url") -> str:
     """Replace each {name} in template with its value from [hosts]."""
 
     def replace(match: re.Match[str]) -> str:
@@ -233,7 +235,7 @@ def _fill(template: str, hosts: Mapping[str, str], where: str) -> str:
         if name not in hosts:
             raise ConfigError(f"{where}: unknown host '{{{name}}}'{_suggest(name, list(hosts))}; add it to [hosts]")
         if not hosts[name]:
-            raise ConfigError(f"{where}: url uses {{{name}}}, but [hosts] {name} is empty")
+            raise ConfigError(f"{where}: {what} uses {{{name}}}, but [hosts] {name} is empty")
         return hosts[name]
 
     return PLACEHOLDER_RE.sub(replace, template)
@@ -331,9 +333,16 @@ def _probe(
         raise ConfigError(f"{where}: auth must be a string")
     if auth_name is not None and auth_name not in auths:
         raise ConfigError(f"{where}: no [auth.{auth_name}] table{_suggest(auth_name, list(auths))}")
+    host = _get_str(table, "host", where, "")
+    if "host" in table and not host:
+        raise ConfigError(f"{where}: host must be a host name, such as app.example.com, and it is empty")
     credentials = None
     if live:
         url = _check_url(_fill(url, hosts, where), where, "url")
+        if host:
+            host = _fill(host, hosts, where, "host")
+            if not HOST_RE.fullmatch(host):
+                raise ConfigError(f"{where}: host must be a host name, such as app.example.com, not {host}")
         if auth_name is not None:
             credentials = _credentials(auth_name, auths[auth_name], env, where)
     return Probe(
@@ -343,6 +352,7 @@ def _probe(
         verify_tls=_get_bool(table, "verify_tls", where, True),
         send_token=_get_bool(table, "send_token", where, False),
         auth=credentials,
+        host=host,
     )
 
 
@@ -521,10 +531,10 @@ def _origin(url: str) -> tuple[str, str]:
 
 
 class _Redirects(urllib.request.HTTPRedirectHandler):
-    """Follow redirects only when asked, and send the secret headers again only to the same scheme, host and port.
+    """Follow redirects only when asked, and send the kept headers again only to the same scheme, host and port.
 
-    urllib copies normal headers to every redirect target, including other hosts, so the secrets are added as
-    unredirected headers and copied here by hand.
+    urllib copies normal headers to every redirect target, including other hosts, so the secrets and the Host
+    header of the probe are added as unredirected headers and copied here by hand.
     """
 
     def __init__(self, follow: bool, secret_headers: Mapping[str, str]) -> None:
@@ -577,13 +587,15 @@ def fetch(probe: Probe, token: str, timeout: float, read_limit: int = 0) -> tupl
 
     Any HTTP answer is returned, whatever its status; no answer at all raises ProbeFailed.
     """
-    secrets = _secret_headers(probe, token)
+    kept = _secret_headers(probe, token)
+    if probe.host:
+        kept["Host"] = probe.host
     opener = urllib.request.build_opener(
-        _Redirects(probe.follow_redirects, secrets),
+        _Redirects(probe.follow_redirects, kept),
         urllib.request.HTTPSHandler(context=_tls_context(probe.verify_tls)),
     )
     request = urllib.request.Request(probe.url, method="GET", headers={"User-Agent": USER_AGENT})
-    for name, value in secrets.items():
+    for name, value in kept.items():
         request.add_unredirected_header(name, value)
     try:
         with opener.open(request, timeout=timeout) as response:
