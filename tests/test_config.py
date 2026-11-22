@@ -65,6 +65,21 @@ def test_general_settings_and_placeholders(tmp_path: Path) -> None:
     assert internal.follow_redirects and not internal.verify_tls
 
 
+def test_probe_host_uses_the_hosts_table(tmp_path: Path) -> None:
+    text = '[hosts]\ndomain = "example.test"\nprimary = "10.0.0.5"\n\n' + check(
+        probes='{ url = "http://{primary}:8005/health", host = "snipe-it.{domain}" }, { url = "http://{primary}/" }'
+    )
+    named, plain = load_config(_write(tmp_path, text), {}).checks[0].probes
+    assert named.host == "snipe-it.example.test"
+    assert plain.host == ""
+
+
+@pytest.mark.parametrize("host", ["https://app.example.test", "app.example.test/x", "app example.test", ""])
+def test_probe_host_must_be_a_host_name(tmp_path: Path, host: str) -> None:
+    with pytest.raises(ConfigError, match="host must be a host name"):
+        load_config(_write(tmp_path, check(probes=f'{{ url = "http://example.test/", host = "{host}" }}')), {})
+
+
 def test_lock_dir_expands_home(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("HOME", str(tmp_path))
     config = load_config(_write(tmp_path, '[general]\nlock_dir = "~/locks"\n' + check()), {})

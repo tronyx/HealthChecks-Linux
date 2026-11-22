@@ -490,13 +490,15 @@ probes = [
   { url = "http://{primary}:8580/sabnzbd/" },
 ]
 
+# Since 8.8.4, Snipe-IT answers 400 to any host other than the host of its
+# APP_URL, so the internal probe sends that host.
 [[check]]
 name = "snipe-it"
 uuid = ""
 enabled = false
 probes = [
-  { url = "https://snipe-it.{domain}/login", send_token = true },
-  { url = "http://{primary}:8005/login" },
+  { url = "https://snipe-it.{domain}/health", send_token = true },
+  { url = "http://{primary}:8005/health", host = "snipe-it.{domain}" },
 ]
 
 # If you turned on the login page in Sonarr (Sonarr v4 asks for one), add

@@ -8,6 +8,16 @@ The project doesn't use version numbers. Each entry is one merge into `master`, 
 
 Nothing yet.
 
+## 2026-11-22 · [#9](https://github.com/tronyx/HealthChecks-Linux/pull/9)
+
+### Added
+
+- A probe can have a `host` setting, for example `host = "snipe-it.{domain}"`. The probe sends it in the `Host` header instead of the host of its URL. A redirect to the same scheme, host and port keeps it, and a redirect to another host does not. Use it for an application that answers only to its public name.
+
+### Changed
+
+- The `snipe-it` check of the example configuration tries `/health` instead of `/login`, and its internal probe sends `host = "snipe-it.{domain}"`. Since 8.8.4, Snipe-IT answers `400` to the IP address of the server.
+
 ## 2026-11-18 · [#8](https://github.com/tronyx/HealthChecks-Linux/pull/8)
 
 ### Added
